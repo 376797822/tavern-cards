@@ -61,10 +61,12 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
    - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理）
    - 各项完成后按顺序注册到 state 的 `first_messages`
    - 对于有 `initvar_override` 的项，参考 `references/mvu/initvar.md#initvar_override`
-10. **UI 界面开发**（如使用 MVU）→ `references/ui/`
-    - 纯文本状态栏：直接编辑 `正则/状态栏界面.html`，无需二次打包
-    - 前端状态栏：先预览版对接 dev server，再打包生产版
-    - 新增其他界面：参考 `regex-scripts.md` + `assets/mvu-patch.json` 既有写法
+10. **UI 界面开发**（如使用 MVU）
+    - 读取 `创作规划.yaml` 的 `ui_mode`：
+      - `text` → 编辑 `正则/状态栏界面.html`（详见 `references/ui/text.md`）
+      - `frontend` → 调用 tavern-ui skill
+      - `none` → 跳过，直接进入步骤 11
+      - `pending` / 缺失 → 不可进入此步，先收敛为 text / frontend / none
 11. **打包输出**：执行打包前检查清单后，运行 `node scripts/tavern-cards-forge.mjs pack {project}` → `references/packaging.md`
 
 ## 状态文件
@@ -105,7 +107,6 @@ references/
 ├── packaging.md                 —— 打包流程与后续维护
 ├── ui/
 │   ├── text.md                  —— 纯文本版状态栏
-│   ├── frontend.md              —— 前端版状态栏（tavern_helper_template）
 │   └── regex-scripts.md         —— 正则脚本配置指南（新增前端界面时必读）
 ├── requirements/
 │   ├── world-characters.md      —— 世界与角色信息收集

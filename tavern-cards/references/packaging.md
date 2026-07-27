@@ -42,7 +42,7 @@
 
 ### 状态栏界面更新
 
-仅前端版需要此步骤，详见 `ui/frontend.md`。
+仅前端版需要此步骤，详见 tavern-ui skill 开发流程。
 
 1. 在 tavern_helper_template 中修改代码
 2. 推送到 GitHub（自动触发 CI 打包）

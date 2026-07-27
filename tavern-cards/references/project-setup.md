@@ -22,6 +22,11 @@
 - **头像**（角色卡时）：是否有头像图片？路径是什么？
   - 有头像 → 打包为 `.png`（`artifact: cards/{Project}/{Project}.png`）
   - 无头像 → 打包为 `.json`（`artifact: cards/{Project}/{Project}.json`）
+- **UI 模式**（使用 MVU 时）：状态栏采用纯文本版还是前端版？
+  - `text` → 纯文本版状态栏
+  - `frontend` → 前端版状态栏
+  - `none` → 不需要状态栏
+  - 未定 → 暂时缺省，必须在 UI 界面开发（步骤 10）前收敛
 
 ### typeLists 调整
 
