@@ -126,6 +126,8 @@ const store = useDataStore();
 </script>
 ```
 
+> **变量访问方式**：前端版通过 `defineMvuDataStore` 读取 MVU 变量（见 store.ts 示例）。
+
 ### 5. CSS 色彩变量命名规范
 
 CSS 色彩变量必须使用**功能语义**命名，禁止使用视觉描述命名。
@@ -166,7 +168,7 @@ pnpm watch
 
 #### 配置实时预览
 
-将项目中的 `正则/状态栏界面.html` 临时改为加载本地服务器。该文件以 3 个反引号行起止（代码块标记），修改时需保留：
+将项目中的 `正则/状态栏界面.html` 临时改为加载本地服务器。该文件首尾各占一行纯三反引号（` ``` `，不带语言标记）作为代码块标记，修改时需保留这两行。
 
 ````
 ```
@@ -202,7 +204,9 @@ pnpm build
 
 ### 8. 更新占位符
 
-部署完成后，修改项目中的 `正则/状态栏界面.html`（同样需保留首尾的代码块标记）：
+部署完成后，修改项目中的 `正则/状态栏界面.html`（文件首尾各一行纯三反引号 ` ``` ` 作为代码块标记，须保留）。
+
+**CDN / 自托管写法**（仅加载链接）：
 
 ````
 ```
@@ -218,6 +222,20 @@ $('body').load('https://testingcf.jsdelivr.net/gh/{GH_USER}/{GH_REPO}/dist/{Proj
 - `{GH_USER}`：GitHub 用户名
 - `{GH_REPO}`：仓库名
 - `{ProjectName}`：项目名称
+
+**全量内联写法**（无 CDN，直接贴入编译产物）：
+
+源文件在模板仓库 `tavern_helper_template/dist/{ProjectName}/界面/状态栏/index.html`，目标文件在用户项目的 `正则/状态栏界面.html`，二者分处不同目录。在 `tavern_helper_template` 根目录执行以下命令，把编译产物连同首尾三反引号行写入目标文件（`{ProjectName}` 替换为真实项目名；目标路径按项目实际位置调整）：
+
+```bash
+{
+  echo '```'
+  cat "dist/{ProjectName}/界面/状态栏/index.html"
+  echo '```'
+} > "{ProjectName}/正则/状态栏界面.html"
+```
+
+> 注意：内联方案会让正则代码块体积显著增大（含全部 CSS/JS），酒馆渲染负担较重。仅在无 CDN 条件时使用。
 
 #### CDN 缓存与刷新
 
