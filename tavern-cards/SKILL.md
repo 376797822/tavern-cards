@@ -30,6 +30,8 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 2. **创建来源**（仅创建阶段）：从零 / 从材料转化
 3. **任务范围**：完整项目 / 局部任务
 
+修改阶段需先判断是否已有工程文件。若用户给的是单独 PNG/JSON 且无对应 state.json，走 `references/modify-existing.md`。
+
 常见组合：
 
 | 组合 | 流程 |
@@ -39,6 +41,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 | 创建 + 局部任务 | 直接定位创作规则文档，不走项目流程 |
 | 修改 + 局部任务 | 加载创作规划.yaml → 根据修改需求更新规划文档 → 定位条目 → 加载创作规则文档 |
 | 修改 + 完整项目 | 断点续接（`references/resume.md`） → 检测进度后回到完整项目流程对应步骤继续 |
+| 修改 + 外部文件（无工程） | 导入解包 → 分析呈现 → 需求对齐 → 按需分类 → 修改 → 打包（`references/modify-existing.md`） |
 | 修改 + MVU 变量 | 定位项目 → 确认变更类型 → 执行变更传播（`references/mvu/guide.md#修改流程`） → 一致性校验 |
 | 评估 | 评估流程：分析结构、检查配置、抽查写作质量，生成评估报告 |
 
@@ -101,6 +104,7 @@ references/
 │   ├── source-chapters.md       —— source_chapters 标注标准
 │   └── key-info.md              —— 关键信息确认流程
 ├── project-setup.md             —— 项目创建
+├── modify-existing.md           —— 已有角色卡/世界书修改流程（外部 PNG/JSON 导入）
 ├── resume.md                    —— 断点续接
 ├── configuration.md             —— 条目运行时配置（仅特殊需求时读取）
 ├── manual.md                    —— tavern-cards-forge操作命令完整参考（按需查阅）
