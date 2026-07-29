@@ -145,6 +145,15 @@ glob_script_files() [L54]
 
 **常见问题**：空白页→5500；socket 连不上→6621+允许监听；加载旧代码→`disableNetworkCache: true`。
 
+### 4.1 WSL 环境的端口转发
+
+开发者把 SillyTavern 跑在 Windows、把开发服务器跑在 WSL2 时，会出现「服务在 WSL 内监听、访问者（浏览器/酒馆）在 Windows 侧」的跨子系统场景。此时直接写 `localhost:5500` 在浏览器里可能加载空白页，原因与跨系统网络边界有关。
+
+- **Live Server 地址**：Live Server 默认绑定 `127.0.0.1`，仅 WSL 自身可达。在 VS Code 设置中把 `liveServer.settings.host` 改为 `0.0.0.0` 才能让 Windows 侧通过 WSL 的网络入口访问 `dist/`。WSL2 较新版本支持 `localhost` 自动转发到 WSL，但镜像网络模式（`networkingMode=mirrored`）与默认 NAT 模式行为不同，本机环境不确定时优先用 WSL 的 IP 访问。
+- **WSL IP 查询**：在 WSL 内执行 `hostname -I` 或 `ip -4 addr show eth0` 取到地址（如 `172.x.x.x`），把 `*实时修改.json` 与 `正则/状态栏界面.html` 中的 `localhost` 一并替换为该 IP。IP 在 WSL 重启后可能变化，每次切换需重新确认。
+- **socket.io 端口**：webpack watch 的 socket.io（`6621`）需同样能被 Windows 侧酒馆助手建立 WebSocket 连接，否则即使 HTML 加载成功也不会触发自动重载。把 `ws://localhost:6621` 改成 `ws://<WSL-IP>:6621`，并确认无防火墙拦截这两个端口。
+- **Windows 防火墙**：若用 WSL IP 仍连不上，检查 Windows Defender 防火墙入站规则是否放行了 `5500` / `6621`，必要时为 WSL 的 vEthernet 网卡加白名单。
+
 **源码引用**：`.vscode/launch.json`、`tasks.json:33`、各 `*实时修改.json` 中 `localhost:5500` 路径。
 
 ---
@@ -315,7 +324,7 @@ tavern_sync 与 tavern-cards-forge 功能重叠：两者都是将项目文件打
 
 ### 12.2 Live Server 端口冲突（5500）
 
-检查 VSCode Live Server 是否运行、`lsof -i :5500`、系统代理是否拦截 localhost。
+检查 VSCode Live Server 是否运行、`lsof -i :5500`、系统代理是否拦截 localhost。若开发服务器在 WSL2、浏览器在 Windows，按 §4.1 把 Live Server 绑到 `0.0.0.0` 并用 WSL IP 替换 `localhost`。
 
 ### 12.3 Socket.IO 连不上（6621）
 

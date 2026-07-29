@@ -160,6 +160,8 @@ CSS 色彩变量必须使用**功能语义**命名，禁止使用视觉描述命
 
 如未安装，自行启动一个带 CORS 头的静态文件服务器，工作目录为 tavern_helper_template 根目录。
 
+> **WSL 环境**：开发服务器跑在 WSL2、浏览器/酒馆跑在 Windows 时，直接用 `localhost` 可能加载空白页。需把 Live Server 绑到 `0.0.0.0` 并用 WSL 的 IP 替换 `localhost`，处理步骤见 `references/environments/tavern-helper-template.md` 的「WSL 环境的端口转发」。
+
 同时运行以下命令监听文件改动并自动重新编译：
 
 ```bash
@@ -183,6 +185,8 @@ $('body').load('http://localhost:5500/dist/{ProjectName}/界面/状态栏/index.
 > `dist/{ProjectName}/` 是 `pnpm watch` 的编译输出路径。端口号按实际使用的服务器端口调整。
 
 修改预览正则后，按 `references/packaging.md` 的打包流程生成预览版角色卡，指导用户导入酒馆并在酒馆助手的 `开发` 选项中勾选 `允许监听`，即可实时预览修改效果。
+
+> WSL 环境下 socket.io 自动重载端口（`6621`）同样需可被 Windows 侧访问，处理步骤同上「WSL 环境的端口转发」。
 
 > **开发/生产切换**：本地测试时使用上述 localhost 地址；部署前需将 `正则/状态栏界面.html` 改回 CDN 地址（见步骤 8）。
 
