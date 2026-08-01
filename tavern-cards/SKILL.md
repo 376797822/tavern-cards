@@ -30,6 +30,8 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 2. **创建来源**（仅创建阶段）：从零 / 从材料转化
 3. **任务范围**：完整项目 / 局部任务
 
+**写角色前的必问判断**：流程涉及编写/修改角色时，先向用户确认该角色采用**整合模版**（主角/深度互动 NPC/功能级角色用 `references/contents-creation/character/main-character.md` 等）还是**原本拆分流程**（基础信息+性格调色盘+三面性+二次解释）。默认用原本拆分流程，详见 `references/composition.md` 角色部分。
+
 修改阶段需先判断是否已有工程文件。若用户给的是单独 PNG/JSON 且无对应 state.json，走 `references/modify-existing.md`。
 
 常见组合：

@@ -28,12 +28,18 @@
 
 **角色**（对每个核心角色）：
 
-1. 基础信息 — 必写
-2. 性格调色盘 — 必写
-3. 三面性 — 可选，仅当角色在不同场景下行为模式有根本性切换时（判断标准见 `references/requirements.md`）
-4. 二次解释 — 必写
+> **先确认写作方式（必问）**：编写每个角色前，先向用户确认该角色采用哪种写作方式，不要擅自决定：
+> - **整合模版**：该角色属于主角 / 深度互动 NPC / 功能级角色，且用户希望用整合模版 → 见下表对应文件
+> - **原本拆分流程**：按基础信息 + 性格调色盘 + 三面性 + 二次解释拆分为多个条目 → 见 `references/contents-creation/character/basic-info.md` 等（下表中的"非上述类型"）
+>
+> 若用户未明确倾向，默认采用**原本拆分流程**。仅在用户确认使用模版时，才按模版编写。
 
-根据角色类型选择对应的写作模板：
+1. 基础信息 — 必写（仅原本拆分流程时逐项拆分）
+2. 性格调色盘 — 必写（仅原本拆分流程时逐项拆分）
+3. 三面性 — 可选，仅当角色在不同场景下行为模式有根本性切换时（判断标准见 `references/requirements.md`）
+4. 二次解释 — 必写（仅原本拆分流程时逐项拆分）
+
+**使用整合模板时**，不执行上面 1-4 的拆分，直接按下表选择对应模版文件、整条编写：
 
 | 角色类型 | 写作方式 | 创作规则文档 |
 |---------|---------|------------|
@@ -60,7 +66,7 @@
 | 世界观 | `references/contents-creation/worldbuilding/worldview.md` |
 | 时间线 | `references/contents-creation/worldbuilding/timeline.md` |
 | 地理 | `references/contents-creation/worldbuilding/geography.md` |
-| 角色（主角/深度互动 |NPC|功能级整合模版） | `references/contents-creation/character/main-character.md` 等（见 character/ 目录，按角色类型映射） |
+| 角色（主角/深度互动 NPC/功能级，整合模版） | `references/contents-creation/character/main-character.md` 等（见 character/ 目录，按角色类型映射） |
 | 角色（非整合类） | `references/contents-creation/character/basic-info.md` 等（见 character/ 目录） |
 | NPC | `references/contents-creation/character/npc.md` |
 | 事件 | 按 `references/rules.md` 编写，无专门文档 |
