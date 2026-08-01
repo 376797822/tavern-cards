@@ -33,6 +33,17 @@
 3. 三面性 — 可选，仅当角色在不同场景下行为模式有根本性切换时（判断标准见 `references/requirements.md`）
 4. 二次解释 — 必写
 
+根据角色类型选择对应的写作模板：
+
+| 角色类型 | 写作方式 | 创作规则文档 |
+|---------|---------|------------|
+| 主角（可被 {{user}} 代入） | 整合模板，不拆分条目 | `references/contents-creation/character/main-character.md` |
+| NPC（深度互动角色） | 整合模板，不拆分条目 | `references/contents-creation/character/npc-character.md` |
+| 功能级角色（引入剧情用） | 简略模板，不拆分条目 | `references/contents-creation/character/function-character.md` |
+| 非上述类型的角色 | 拆分编写：基础信息 + 调色盘等 | `references/contents-creation/character/basic-info.md` 等 |
+
+使用整合模板的角色（主角/NPC/功能级）**不再拆分**为基础信息、性格调色盘、三面性、二次解释等多个条目，全部写入一条条目中。
+
 5 个以上角色时，先编写角色速览（`references/contents-creation/character/character-catalog.md`）。
 
 **角色阶段原则**：
@@ -49,7 +60,8 @@
 | 世界观 | `references/contents-creation/worldbuilding/worldview.md` |
 | 时间线 | `references/contents-creation/worldbuilding/timeline.md` |
 | 地理 | `references/contents-creation/worldbuilding/geography.md` |
-| 角色 | `references/contents-creation/character/basic-info.md` 等（见 character/ 目录） |
+| 角色（主角/深度互动 |NPC|功能级整合模版） | `references/contents-creation/character/main-character.md` 等（见 character/ 目录，按角色类型映射） |
+| 角色（非整合类） | `references/contents-creation/character/basic-info.md` 等（见 character/ 目录） |
 | NPC | `references/contents-creation/character/npc.md` |
 | 事件 | 按 `references/rules.md` 编写，无专门文档 |
 | 阶段指导 | `references/contents-creation/stage-guidance.md` |
