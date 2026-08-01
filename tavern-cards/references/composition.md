@@ -28,8 +28,8 @@
 
 **角色**（对每个核心角色）：
 
-> **先确认写作方式（必问）**：编写每个角色前，先向用户确认该角色采用哪种写作方式，不要擅自决定：
-> - **整合模版**：该角色属于主角 / 深度互动 NPC / 功能级角色，且用户希望用整合模版 → 见下表对应文件
+> **先确认写作方式（必问）**：编写每个角色/家庭/组织前，先向用户确认采用哪种写作方式，不要擅自决定：
+> - **整合模版**：该对象属于主角 / 深度互动 NPC / 功能级角色 / 家庭 / 组织，且用户希望用整合模版 → 见下表对应文件
 > - **原本拆分流程**：按基础信息 + 性格调色盘 + 三面性 + 二次解释拆分为多个条目 → 见 `references/contents-creation/character/basic-info.md` 等（下表中的"非上述类型"）
 >
 > 若用户未明确倾向，默认采用**原本拆分流程**。仅在用户确认使用模版时，才按模版编写。
@@ -46,6 +46,8 @@
 | 主角（可被 {{user}} 代入） | 整合模板，不拆分条目 | `references/contents-creation/character/main-character.md` |
 | NPC（深度互动角色） | 整合模板，不拆分条目 | `references/contents-creation/character/npc-character.md` |
 | 功能级角色（引入剧情用） | 简略模板，不拆分条目 | `references/contents-creation/character/function-character.md` |
+| 家庭（一户人家/家族整体） | 家庭模板，不拆分条目 | `references/contents-creation/character/family-character.md` |
+| 组织（帮派/门派/商会等势力） | 组织模板，不拆分条目 | `references/contents-creation/character/organization-character.md` |
 | 非上述类型的角色 | 拆分编写：基础信息 + 调色盘等 | `references/contents-creation/character/basic-info.md` 等 |
 
 使用整合模板的角色（主角/NPC/功能级）**不再拆分**为基础信息、性格调色盘、三面性、二次解释等多个条目，全部写入一条条目中。
@@ -67,6 +69,8 @@
 | 时间线 | `references/contents-creation/worldbuilding/timeline.md` |
 | 地理 | `references/contents-creation/worldbuilding/geography.md` |
 | 角色（主角/深度互动 NPC/功能级，整合模版） | `references/contents-creation/character/main-character.md` 等（见 character/ 目录，按角色类型映射） |
+| 家庭（整合模版） | `references/contents-creation/character/family-character.md` |
+| 组织（整合模版） | `references/contents-creation/character/organization-character.md` |
 | 角色（非整合类） | `references/contents-creation/character/basic-info.md` 等（见 character/ 目录） |
 | NPC | `references/contents-creation/character/npc.md` |
 | 事件 | 按 `references/rules.md` 编写，无专门文档 |
