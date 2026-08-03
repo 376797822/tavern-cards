@@ -172,6 +172,7 @@ node scripts/tavern-cards-forge.mjs pack <project> [--state <path>] [--output <p
    - 文件解析：加载 `path`/`contents`、`replace_file`、`script_file` 指向的文件内容
    - **Zod 脚本生成**：由 `state.zod` 驱动，从 `schemaPath` 重建；Zod 脚本内容直接注入产出物
    - **initvar_override 嵌入**：若 `state.initvar_overrides` 存在，对应开场白末尾的 `<UpdateVariable><initvar>` 块更新为 override YAML 内容
+   - **状态栏占位符追加**（`state.mvu === true` 时）：`.txt` 开场白文件末尾自动追加 `<StatusPlaceHolderImpl/>`，内容已含占位符时跳过；`.md` 等其他后缀与内联文本不追加
 5. 输出格式选择与写出
 
 ```bash
@@ -195,7 +196,7 @@ node scripts/tavern-cards-forge.mjs unpack <project> [--file <path>] [--output <
 - 内容保存：YAML 结构 → `世界书/{name}.yaml`，否则 `.txt`；`replaceString` → `正则/{scriptName}.txt`；脚本 content → `脚本/{name}.txt`
 - **文件名冲突防护**：写出条目文件时，如目标路径已被占用，自动添加 `_1`/`_2` 等数字后缀避免冲突。这在 merge 模式下尤其重要（已有文件可能与新条目同名）
 - **启用的 Zod 脚本**：从 `tavern_helper.scripts` 中检测到 MVU Zod 脚本后，提取元数据到 `state.zod`，写出 `schema.ts`，并从 scripts 中移除该 Zod 脚本条目（不再写出为 `脚本/{name}.txt`）。压缩/编译脚本仅记录警告，提示手动编写 `schema.ts`
-- first_messages → `开场白/{index}.txt`（[0] 为 first_mes，[1:] 为 alternate_greetings）
+- first_messages → `开场白/{index}.{txt|md}`（[0] 为 first_mes，[1:] 为 alternate_greetings；`mvu === true` 时按内容分流后缀，见步骤 8）
 - **`mvu === true` 时**：对所有开场白检测并提取 `<UpdateVariable><initvar>` 块为 `开场白/initvar/{index}.yaml`，同时填充 `initvar_overrides`
 
 **unpack 详细行为：**
@@ -211,7 +212,8 @@ node scripts/tavern-cards-forge.mjs unpack <project> [--file <path>] [--output <
    - `button`/`info`/`data` 三个可选字段：如果值等于 ST 默认值（空串、`{enabled:true,buttons:[]}`、`{}`）则不写入 `state.zod`，保持 state 极简；pack 时自动回填默认值
    - 多个启用时警告「运行时不确定，建议禁用多余」并取第一个
    - 压缩/编译脚本（含 sourceMappingURL / import 别名 / 超长单行）跳过提取，提示手动编写 `schema.ts`
-8. `first_messages` 写入 `开场白/{index}.txt`
+8. `first_messages` 写入 `开场白/{index}.{txt|md}`
+   - 后缀分流（`mvu === true` 时）：内容含 `<StatusPlaceHolderImpl/>` 存 `.txt`（打包时幂等跳过追加），不含存 `.md`（打包时不追加）；非 MVU 项目恒 `.txt`。保证解包后再次打包与原始卡一致
    - `mvu === true` 时，对所有开场白检测 `<UpdateVariable><initvar>` 块，写出为 `开场白/initvar/{index}.yaml`，填充 `initvar_overrides` 映射
 9. 生成 `tavern-cards-state.json`
 
@@ -487,7 +489,7 @@ echo '[{"op":"remove","path":"/entryManifest/region/废弃地点"}]' | node scri
     0.txt
     1.txt
     initvar/                     # 仅 MVU 项目，unpack 提取或手动创建
-      1.yaml                     # 与 开场白/{index}.txt 编号一致
+      1.yaml                     # 与开场白文件编号一致（.txt 或 .md）
   正则/  {name}.txt              # 仅角色卡项目
   脚本/  {name}.txt              # 仅角色卡项目（Zod 脚本由 state.zod 驱动重建）
 ```
