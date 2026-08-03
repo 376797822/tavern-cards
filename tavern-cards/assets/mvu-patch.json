@@ -95,9 +95,7 @@
       "markdownOnly": false,
       "promptOnly": true,
       "runOnEdit": true,
-      "substituteRegex": 0,
-      "minDepth": null,
-      "maxDepth": null
+      "substituteRegex": 0
     }
   },
   {
@@ -113,9 +111,7 @@
       "markdownOnly": true,
       "promptOnly": false,
       "runOnEdit": true,
-      "substituteRegex": 0,
-      "minDepth": null,
-      "maxDepth": null
+      "substituteRegex": 0
     }
   },
   {
@@ -131,9 +127,7 @@
       "markdownOnly": false,
       "promptOnly": true,
       "runOnEdit": false,
-      "substituteRegex": 0,
-      "minDepth": null,
-      "maxDepth": null
+      "substituteRegex": 0
     }
   },
   {
@@ -149,9 +143,7 @@
       "markdownOnly": true,
       "promptOnly": false,
       "runOnEdit": false,
-      "substituteRegex": 0,
-      "minDepth": null,
-      "maxDepth": null
+      "substituteRegex": 0
     }
   },
   {
@@ -167,9 +159,7 @@
       "markdownOnly": true,
       "promptOnly": false,
       "runOnEdit": false,
-      "substituteRegex": 0,
-      "minDepth": null,
-      "maxDepth": null
+      "substituteRegex": 0
     }
   }
 ]

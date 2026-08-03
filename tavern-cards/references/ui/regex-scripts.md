@@ -61,8 +61,8 @@ regex_scripts 是 SillyTavern 的消息处理管道中的一环。每个脚本�
 | `promptOnly` | 仅影响后端提示词（AI 侧） | 隐藏脚本用 `true`，替换脚本用 `false` |
 | `runOnEdit` | 编辑消息时触发 | 状态栏用 `true`，变量更新用 `false` |
 | `substituteRegex` | 0=不替换, 1=替换(原始), 2=替换(转义) | 通常为 `0` |
-| `minDepth` | 影响的最小楼层深度（1=最新） | `null` |
-| `maxDepth` | 影响的最大楼层深度 | `null` |
+| `minDepth` | 影响的最小楼层深度（1=最新） | 缺省（不限制） |
+| `maxDepth` | 影响的最大楼层深度 | 缺省（不限制） |
 
 ### 字段详解
 
@@ -70,7 +70,7 @@ regex_scripts 是 SillyTavern 的消息处理管道中的一环。每个脚本�
 - `promptOnly` vs `markdownOnly`：`promptOnly: true` 的脚本在消息发送给 AI 前运行（控制 AI 能看到什么），`markdownOnly: true` 的脚本在消息渲染到前端时运行（控制用户能看到什么）。两者可同时启用，效果与 `substituteRegex: 2` 相似，但不改变原始文本，更安全。
 - `substituteRegex`：当需要修改匹配内容本身时设为 `1` 或 `2`。设 `0` 时不改变原始文本（最安全）。绝大多数场景用 `0`。
 - `runOnEdit`：用户在消息编辑框中修改内容时是否触发。状态栏这类需要实时预览的场景设为 `true`；变量更新在编辑时不需触发，设为 `false`。
-- `minDepth` / `maxDepth`：限制脚本仅作用于一定楼层深度的消息。最新消息深度为 1，越早的消息深度越大。`null` 表示不限制。
+- `minDepth` / `maxDepth`：限制脚本仅作用于一定楼层深度的消息。最新消息深度为 1，越早的消息深度越大。省略即不限制（state 格式不接受 `null`；pack 时会以 `null` 写入卡片，SillyTavern 语义不变）。
 
 ## 正则表达式详解
 
@@ -186,9 +186,7 @@ regex_scripts 是 SillyTavern 的消息处理管道中的一环。每个脚本�
     "markdownOnly": false,
     "promptOnly": true,
     "runOnEdit": true,
-    "substituteRegex": 0,
-    "minDepth": null,
-    "maxDepth": null
+    "substituteRegex": 0
   }
 }
 ```
@@ -209,9 +207,7 @@ regex_scripts 是 SillyTavern 的消息处理管道中的一环。每个脚本�
     "markdownOnly": true,
     "promptOnly": false,
     "runOnEdit": true,
-    "substituteRegex": 0,
-    "minDepth": null,
-    "maxDepth": null
+    "substituteRegex": 0
   }
 }
 ```
