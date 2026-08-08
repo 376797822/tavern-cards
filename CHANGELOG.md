@@ -2,7 +2,27 @@
 
 本项目基于 [ai4rpg/tavern-cards](https://github.com/ai4rpg/tavern-cards) 的 fork。版本号从 v1.0 开始记录本 fork 的自定义改动，跟随上游更新时在对应版本内注明。
 
-## v1.1 — 模版增强（当前版本）
+## v1.2 — 上游同步：MVU 修复 / 开场白增强 / 修改流程重构（当前版本）
+
+> 合并上游 `49ebe70..a053e54`，共 3 个提交。本 fork 的自定义模版（v1.0/v1.1）未受影响，自动合并零冲突。
+
+### 上游变更
+
+- **MVU 修复** [`aaf1058`]：`mvu-patch.json` 和 regex 脚本文档中移除无效的 `null` 值 `minDepth`/`maxDepth`，避免生成的 JSON Patch 带空字段
+- **开场白增强** [`8bec605`]：纯文本格式的 MVU 问候语拆包时自动追加状态栏占位符；打包时分离问候语后缀；新增说明性问候语支持
+- **修改流程重构** [`a053e54`]：将 revision（修改已有卡片/世界书）的流程逻辑从多个文档中抽取为独立文件 `references/revision.md`；统一"先收齐所有编辑请求、再统一修改条目"的工作流
+
+### 涉及文件
+
+`SKILL.md`、`mvu-patch.json`、`composition.md`、`first-message.md`、`conventions.md`、`error-handling.md`、`manual.md`、`modify-existing.md`、`initvar.md`、`revision.md`（新增）、`regex-scripts.md`、`text.md`、`tavern-cards-forge.mjs`
+
+### 未改动
+
+本 fork 的五种角色整合模版（主角/NPC/功能/家庭/组织）和 CHANGELOG.md 保持不变，合并无冲突。
+
+---
+
+## v1.1 — 模版增强
 
 > 基于上游 `49ebe70`。本次新增/修改均在 `tavern-cards/` 目录内，未改动脚本。
 
