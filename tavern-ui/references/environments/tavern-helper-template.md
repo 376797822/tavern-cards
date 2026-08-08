@@ -235,6 +235,26 @@ tavern_sync 与 tavern-cards-forge 功能重叠：两者都是将项目文件打
 
 常见问题：`Cannot find module '*.vue'` → 检查 `global.d.ts` 是否被 `tsconfig.json` 的 `include` 包含。
 
+### 8.4 vue-tsc 静态类型检查
+
+webpack 的 ts-loader 只转译不查类型（`transpileOnly: true`，见 §3.1），`tsc` 不解析 `.vue`。唯一在静态阶段完整覆盖 `.vue` + `.ts` 的检查是 `vue-tsc`（已随模板 devDependencies 安装；本地缺失时 `npx -y` 会自动拉取临时版本），编码完成后、预览与打包前先跑一次：
+
+```bash
+npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/"
+```
+
+`grep -E "^src/"` 把检查范围限定在自己的源码：模板 `tsconfig.json` 的 `include` 同时含 `初始模板/`、`示例/`、`@types/`、`util`，这些目录自带基线噪音（示例代码的未用声明、CDN 副作用导入无类型声明、`@vueuse` 对 Web Bluetooth 的类型假设、`@types/function/` 的泛型实参缺省等），与自己的代码无关。按路径排除噪音比按报错编号过滤更稳：编号白名单必须随新编号手动扩列，漏掉新编号即漏报真错；路径前缀只有一个，新编号自动纳入。
+
+vue-tsc 按 tsconfig 全量检查（`strict`、`noUnusedLocals`、`noUnusedParameters` 均开启；后两项在 webpack dev 模式下临时关闭，见 §8.1）。schema 漂移与组件接口错位的典型报错：`TS2339`（访问 schema 中不存在的字段）、`TS2345`（组件 props 传参不匹配，含 Vue 模板 `in-battle` → `inBattle` 自动映射错位）、`TS2322`（类型不兼容，如 `null` 传给 `Record<string, any>` props）、`TS1117`（schema 重复定义字段）、`TS6133`（声明未使用）。
+
+**第二层过滤（仅在 `src/` 内出现可明确判定为工具链噪音的报错编号时再加）**：
+
+```bash
+npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/" | grep -vE "TS2882"
+```
+
+`TS2882` 是 CDN `import 'https://…'` 副作用导入无类型声明的报错（如 MVU 脚本直接引用 jsdelivr 资源），语义上「我知道没有类型声明」，可安全忽略。`TS6133` 不入黑名单：自己代码里的未用声明恒为真错。
+
 ---
 
 ## 9. Auto-import 与代码混淆
@@ -351,3 +371,7 @@ tavern_sync 与 tavern-cards-forge 功能重叠：两者都是将项目文件打
 ### 12.8 Webpack 编译缓存
 
 `watchOptions.ignored` 含 `**/dist`（`webpack.config.ts:196-198`），dist/ 变更不触发重编。手动清 `node_modules/.cache/webpack` 或 `pnpm store prune`。
+
+### 12.9 Schema 字段在 UI 不显示 / 写入后下一 tick 被清空
+
+`pnpm build` 正常但出现该现象 → 先跑 vue-tsc 静态类型检查（命令见 §8.4）定位 `TS2339`。根因是 `schema.ts` 缺该字段：Zod v4 默认 strip 模式剥除未定义字段，`util/mvu.ts` 轮询 `safeParse` 结果不含该字段，`_.isEqual` 判定不等后覆盖 store，UI 刚写入的数据被清空。修复：补 schema 字段或改前端引用，询问用户以哪一侧为准后再修改。

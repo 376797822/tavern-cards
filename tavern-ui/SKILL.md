@@ -154,6 +154,20 @@ CSS 色彩变量必须使用**功能语义**命名，禁止使用视觉描述命
 
 ### 6. 本地测试
 
+#### 静态类型检查
+
+编码完成后、启动预览与打包前，先跑一次 vue-tsc 静态类型检查，通过后再进入本地预览与打包（命令与噪音处理见 `references/environments/tavern-helper-template.md` 的「8.4 vue-tsc 静态类型检查」）：
+
+```bash
+npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/"
+```
+
+报「前端引用了 schema 中不存在的字段」类错误时，先判断该字段是设计内状态（补 schema 字段）还是前端临时内部状态（改前端引用），无法判断时询问用户以哪一侧为准，确认后再修改。
+
+> `schema.ts` 的修改按 tavern-cards skill 的 `references/mvu/guide.md#修改流程` 执行，并保持模板仓库与用户项目两处副本一致。
+
+#### 启动本地预览
+
 先询问用户是否安装了 VS Code 的 Live Server 扩展。
 
 如已安装，指导用户在 tavern_helper_template 根目录右键，选择"Open with Live Server"。Live Server 自动注入 CORS 头并启动 HTTP 服务，默认端口 `5500`。
@@ -168,7 +182,7 @@ CSS 色彩变量必须使用**功能语义**命名，禁止使用视觉描述命
 pnpm watch
 ```
 
-#### 配置实时预览
+#### 配置预览正则
 
 将项目中的 `正则/状态栏界面.html` 临时改为加载本地服务器。该文件首尾各占一行纯三反引号（` ``` `，不带语言标记）作为代码块标记，修改时需保留这两行。
 
