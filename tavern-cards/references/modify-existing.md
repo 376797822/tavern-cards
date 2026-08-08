@@ -32,12 +32,13 @@ node scripts/tavern-cards-forge.mjs unpack adhoc --file {用户文件路径} --o
 | 纯内容编辑 | 改某条目的文本、修错字 | 否 |
 | 配置微调 | 改 keywords、enabled、probability | 否（不改 strategy/position 时） |
 | 影响 strategy/position 的修改 | 改触发方式、调位置、改深度 | 是 |
-| 新增条目 | 加角色、加世界观 | 是 |
+| 新增条目 | 加角色、加世界观 | 是（用户明确类型/位置时可跳过） |
 | 删除/重排条目 | 移除废弃条目、调整顺序 | 是（重排 order 时） |
 | 大规模重构 | 重写世界观体系、加 MVU | 是 |
 
-不需要分类时 → 跳到步骤 5 直接修改。
+不需要分类时 → 先做 3.1 项目注册，再跳到步骤 5。
 需要分类时 → 进入步骤 3。
+新增条目可跳过分类的前提是类型已在 `typeLists` 中（否则仍需 3.3 补充）。
 
 ### 3. 项目注册与条目分类
 
@@ -86,12 +87,26 @@ node scripts/tavern-cards-forge.mjs configure {project} --force
 
 ### 5. 执行修改
 
-根据用户需求执行具体修改：
+> 本步只执行编辑动作。是否需要分类已在第 2 步判定（configure 触发条件见步骤 4）：不涉及分类的修改（纯内容编辑、非 strategy 的配置微调）直接在本步完成；需要分类的修改（新增、重排、strategy/position 调整、大规模重构）在步骤 3–4 完成后执行。
 
-- 编辑内容文件
-- 用 `patch` 更新 entryManifest 配置
-- 新增条目时按 `references/conventions.md` 注册
-- 新增内容的写作规则：以用户要求优先；用户未明确时，主动询问是否参照 skill 写作规则（`references/rules.md`）还是保持原卡风格
+#### 5.1 世界书条目
+
+- **以用户要求优先**：用户未明确时，主动询问是参照 skill 写作规则（`references/rules.md`）还是保持原卡风格
+- **内容与配置字段**：条目内容编辑遵循 `references/composition.md`（前置必读的写作规则与检查清单）；配置字段（keywords / enabled / probability 等）用 patch 修改，见 `references/manual.md#EntryManifestLeaf`
+- **新增条目**：编写内容文件并按 `references/conventions.md#条目注册` patch add 注册
+- **删除/重排**：删除用 patch remove 移除 manifest 条目，并手动删除磁盘文件（patch 只改 state 不删文件）；重排/移动路径用 patch replace 更新 order / path 字段（path 变更自动重命名磁盘文件，不要手动 mv）
+
+#### 5.2 开场白
+
+- 编辑 `开场白/` 下文件；格式（叙事式/大纲式/说明式）、注册与自查清单见 `references/contents-creation/first-message.md`
+- **后缀是占位符开关**：`.txt` 打包时自动追加 `<StatusPlaceHolderImpl/>`，`.md` 打包时不追加（见 `references/contents-creation/first-message.md#开场白后缀约定`）。旧版卡解包的开场白无占位符、存为 `.md`，需要状态栏时把后缀改为 `.txt`，打包即自动追加；不需要占位符或需自定义实现时改回 `.md`
+- 开场白需要不同初始变量时，按 `references/mvu/initvar.md#initvar_override` 处理
+- 新增/删除开场白：patch 操作 `first_messages` 数组，删除后手动清理磁盘文件（与 5.1 相同：patch 只改 state，不删文件）
+
+#### 5.3 正则 / 脚本
+
+- **正则脚本**：编辑 `正则/*.txt`，写法与常见错误见 `references/ui/regex-scripts.md`。前端界面（状态栏等）按用户需求选型：简单展示见 `references/ui/text.md`（纯文本版状态栏），复杂交互走 tavern-ui skill
+- **酒馆助手脚本**：`脚本/*.txt` 仅引用外部加载地址（jsdelivr bundle），为固定资产，不需要修改（见 `references/mvu/templates.md`）
 
 ### 6. 旧版 MVU 迁移（条件触发）
 

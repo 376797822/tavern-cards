@@ -16,7 +16,7 @@
 ### 存放约定
 
 - 默认：`世界书/变量/initvar.yaml`
-- 额外：`开场白/initvar/{index}.yaml`（与 `开场白/{index}.txt` 编号一致）
+- 额外：`开场白/initvar/{index}.yaml`（与对应开场白文件编号一致，.txt 或 .md）
 - `initvar_override` 不是独立条目，不写入 entryManifest；通过 `state.initvar_overrides` 注册到 state（见下文「注册到 state」）
 - 所有 initvar YAML 必须与 `schema.ts` 一致
 - **schema.ts 顶部禁止任何 `import` 语句**（`z`/`_` 已为全局注入）；详见 `references/mvu/schema.md#加载与-import-约束`

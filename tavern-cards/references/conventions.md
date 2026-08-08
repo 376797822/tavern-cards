@@ -44,7 +44,7 @@
   0.txt
   1.txt
   initvar/                     # 仅 MVU 项目：initvar_override YAML 文件
-    1.yaml                     # 与 开场白/{index}.txt 编号一致
+    1.yaml                     # 与开场白文件编号一致（.txt 或 .md）
 ```
 
 **不做硬性路径规定**，AI 根据项目实际需要自行合理决定，保持与 entryManifest key 和创作规划 entries name 的一致性即可。
