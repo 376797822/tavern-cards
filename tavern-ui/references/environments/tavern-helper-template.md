@@ -152,9 +152,35 @@ glob_script_files() [L54]
 - **Live Server 地址**：Live Server 默认绑定 `127.0.0.1`，仅 WSL 自身可达。在 VS Code 设置中把 `liveServer.settings.host` 改为 `0.0.0.0` 才能让 Windows 侧通过 WSL 的网络入口访问 `dist/`。WSL2 较新版本支持 `localhost` 自动转发到 WSL，但镜像网络模式（`networkingMode=mirrored`）与默认 NAT 模式行为不同，本机环境不确定时优先用 WSL 的 IP 访问。
 - **WSL IP 查询**：在 WSL 内执行 `hostname -I` 或 `ip -4 addr show eth0` 取到地址（如 `172.x.x.x`），把 `*实时修改.json` 与 `正则/状态栏界面.html` 中的 `localhost` 一并替换为该 IP。IP 在 WSL 重启后可能变化，每次切换需重新确认。
 - **socket.io 端口**：webpack watch 的 socket.io（`6621`）需同样能被 Windows 侧酒馆助手建立 WebSocket 连接，否则即使 HTML 加载成功也不会触发自动重载。把 `ws://localhost:6621` 改成 `ws://<WSL-IP>:6621`，并确认无防火墙拦截这两个端口。
+- **Live Server CORS**（WSL/跨端口场景同样适用）：把 `host` 改 `0.0.0.0` 只解决可达性问题；若 iframe 仍界面不显示且 console 报 CORS 相关错误，确认 `.vscode/settings.json` 已配置 `liveServer.settings.cors: true` 与 `liveServer.settings.headers`（配置值见 §4.2）。
 - **Windows 防火墙**：若用 WSL IP 仍连不上，检查 Windows Defender 防火墙入站规则是否放行了 `5500` / `6621`，必要时为 WSL 的 vEthernet 网卡加白名单。
 
 **源码引用**：`.vscode/launch.json`、`tasks.json:33`、各 `*实时修改.json` 中 `localhost:5500` 路径。
+
+### 4.2 跨端口 CORS
+
+Live Server（5500）与酒馆（8000）不同端口，跨端口取 HTML 必须有 CORS 头，**新版 Live Server 默认不注入**。若没配置，iframe 内 `$('body').load(...)` 会被 CORS 拦截，**console 会报 CORS 相关错误**（`dist/...` 为实际预览路径）：
+
+```text
+Access to XMLHttpRequest at 'http://localhost:5500/dist/...' from origin 'http://127.0.0.1:8000/' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+iframe 界面不显示（其他 DOM 元素照常渲染，只是该 iframe 的 src 资源被拦）。
+
+需在 `.vscode/settings.json` 显式开启：
+
+```json
+{
+  "liveServer.settings.cors": true,
+  "liveServer.settings.headers": {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "*",
+    "Access-Control-Allow-Headers": "*"
+  }
+}
+```
+
+**预览 URL 与工作区**：Live Server 根目录固定为当前 VS Code 工作区目录。工作区为 tavern_helper_template 时用 `dist/{ProjectName}/界面/状态栏/index.html`；工作区为父目录时 URL 需带 `tavern_helper_template/` 前缀，如 `tavern_helper_template/dist/{ProjectName}/界面/状态栏/index.html`。
 
 ---
 
@@ -237,7 +263,7 @@ tavern_sync 与 tavern-cards-forge 功能重叠：两者都是将项目文件打
 
 ### 8.4 vue-tsc 静态类型检查
 
-webpack 的 ts-loader 只转译不查类型（`transpileOnly: true`，见 §3.1），`tsc` 不解析 `.vue`。唯一在静态阶段完整覆盖 `.vue` + `.ts` 的检查是 `vue-tsc`（已随模板 devDependencies 安装；本地缺失时 `npx -y` 会自动拉取临时版本），编码完成后、预览与打包前先跑一次：
+webpack 的 ts-loader 只转译不查类型（`transpileOnly: true`，见 §3.1），`tsc` 不解析 `.vue`。唯一在静态阶段完整覆盖 `.vue` + `.ts` 的检查是 `vue-tsc`。**`vue-tsc` 不在模板的 `dependencies` / `devDependencies` 中**（若本地 `pnpm why vue-tsc` 仍报 `the root project (devDependencies)`，那是早期 lockfile 残留，应 `git restore package.json pnpm-lock.yaml && pnpm install` 或 `git clean -xfd node_modules && pnpm install` 复位）。用 `npx vue-tsc --noEmit` 跑时，`npx` 先在本地 `node_modules/.bin/` 找，找不到再走 `npx -y` 临时下载。临时拉取会增加首次跑类型检查的时间与联网依赖；若 `npx -y` 无法联网（CI 受限 / 内网闸机），把 `vue-tsc` 加进本地 `devDependencies` 是项目层选择，不修改模板。编码完成后、预览与打包前先跑一次：
 
 ```bash
 npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/"
@@ -346,6 +372,8 @@ npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/" | grep -vE "TS2882
 
 检查 VSCode Live Server 是否运行、`lsof -i :5500`、系统代理是否拦截 localhost。若开发服务器在 WSL2、浏览器在 Windows，按 §4.1 把 Live Server 绑到 `0.0.0.0` 并用 WSL IP 替换 `localhost`。
 
+端口没冲突但 iframe 界面不显示 / console 报 CORS 相关错误时，按 §4.2 跨端口 CORS 排查。
+
 ### 12.3 Socket.IO 连不上（6621）
 
 确认 webpack watch 运行中、端口未被占用、酒馆助手「允许监听」已开启。控制台检查 `ws://localhost:6621` WebSocket 连接。
@@ -372,6 +400,3 @@ npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/" | grep -vE "TS2882
 
 `watchOptions.ignored` 含 `**/dist`（`webpack.config.ts:196-198`），dist/ 变更不触发重编。手动清 `node_modules/.cache/webpack` 或 `pnpm store prune`。
 
-### 12.9 Schema 字段在 UI 不显示 / 写入后下一 tick 被清空
-
-`pnpm build` 正常但出现该现象 → 先跑 vue-tsc 静态类型检查（命令见 §8.4）定位 `TS2339`。根因是 `schema.ts` 缺该字段：Zod v4 默认 strip 模式剥除未定义字段，`util/mvu.ts` 轮询 `safeParse` 结果不含该字段，`_.isEqual` 判定不等后覆盖 store，UI 刚写入的数据被清空。修复：补 schema 字段或改前端引用，询问用户以哪一侧为准后再修改。

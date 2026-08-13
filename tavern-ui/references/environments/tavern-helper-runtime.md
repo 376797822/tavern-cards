@@ -117,7 +117,7 @@ iframe 注册的 listener 会被自动 wrapper 化：
 | `getCurrentMessageId()` 报错 | 在脚本 iframe 中调用，仅限 `TH-message--` 前缀 |
 | `getScriptId()` 报错 | 在消息楼层 iframe 中调用，仅限 `TH-script--` 前缀 |
 | 写入变量后值丢失 | `script` 类型变量不持久化，改用 `global`/`chat`/`message` |
-| `message` 变量写入后下一 tick 被清空 | `schema.ts` 缺该字段，Zod strip 剥除后被 `util/mvu.ts` 轮询校验覆盖；补 schema 字段或改前端引用，先询问用户以哪一侧为准（先跑 vue-tsc 定位，见 `references/environments/tavern-helper-template.md` 的 §8.4） |
+| `message` 变量在前端读不到 | `schema.ts` 缺该字段；补 schema 字段或改前端引用，先询问用户以哪一侧为准（先跑 vue-tsc 定位，见 `references/environments/tavern-helper-template.md` 的 §8.4） |
 | 事件监听不触发 | iframe 已销毁（pagehide 已清理）或函数引用与其它 iframe 冲突 |
 | CDN 加载阻塞 | CDN `<script>` 同步加载，不可达会阻塞 iframe；检查 `testingcf.jsdelivr.net` 可达性 |
 | `vh` 单位导致布局错乱 | 仅 4 种模式的 `vh` 被替换为 `--TH-viewport-height` 计算，绕过预扫描的动态 `vh` 不替换 |

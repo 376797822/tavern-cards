@@ -170,7 +170,9 @@ npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/"
 
 先询问用户是否安装了 VS Code 的 Live Server 扩展。
 
-如已安装，指导用户在 tavern_helper_template 根目录右键，选择"Open with Live Server"。Live Server 自动注入 CORS 头并启动 HTTP 服务，默认端口 `5500`。
+如已安装，指导用户以 tavern_helper_template 为 VS Code 工作区打开（**根目录固定为当前工作区目录**）。
+
+> **新版 Live Server 默认不注入 CORS 头**，症状细节与 `.vscode/settings.json` 配置见 `references/environments/tavern-helper-template.md` 的「跨端口 CORS」。
 
 如未安装，自行启动一个带 CORS 头的静态文件服务器，工作目录为 tavern_helper_template 根目录。
 
