@@ -24,6 +24,8 @@
 - 报错原文含「do NOT run `npm install`」「Cannot find module 'zod'」——遇到直接删除对应 import，**不要给项目 `npm install zod`/`lodash`**
 - Zod 脚本由 pack 从 schema.ts 自动生成（通过 state.zod 驱动），CDN URL import（`import { registerMvuSchema } from 'https://...'`）自动追加，无需手写
 
+**同一 `z.object({...})` 内不得重复字段键**（含嵌套对象与 `.prefault({...})` 默认值对象）。重复键在运行时会被 JS 静默覆盖——Zod 只保留最后一个，运行时校验检不出来，只有前端 vue-tsc（TS1117）会报。因此，forge 在源码层提前拦截：pack 与 validate-mvu 命中即报错。
+
 ## 前置
 - 变量结构已在需求对齐阶段确定并写入 `创作规划.yaml` 的 `mvu` 段落（见 `references/requirements.md`），直接使用其中的变量结构编写 schema.ts。`mvu.variables` 中的 `check` 字段是特殊更新要求的提示，编写变量更新规则时使用。
 - 如果规划文档的 `mvu` 信息不足以编写 schema.ts，询问用户补充。

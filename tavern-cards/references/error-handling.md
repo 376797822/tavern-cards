@@ -73,6 +73,15 @@ schema 校验不通过、路径冲突、JSON 格式错误等：
 
 `state.zod` 缺失时 validate-mvu 会报错，需确保 `mvu-patch.json` 已正确应用（包含 `/zod` 的 add 操作）。Zod 脚本内容校验现在通过 `state.zod` 驱动，schema.ts 路径由 `state.zod.schemaPath` 定位。
 
+**重复字段键**：报错形如 `duplicate field keys ... Schema.好感度: appears 2 times (lines 2, 3)`，列出键名、对象路径与全部出现行号。按提示定位 `schema.ts` 中对应的 `z.object`，删掉重复的键、只保留一个即可。复制粘贴字段时容易引入此类问题。
+
+### pack 产出警告
+
+pack 完成时可能输出两类警告，均为自动处置，确认产物即可：
+
+- **avatar 回退**：`avatar` 非空但文件内容不是合法 PNG → 回退输出角色 JSON 卡。如需 PNG，更换为合法 PNG 头像后重新 pack。
+- **后缀自动修正**：产物路径后缀与实际格式不符（如 `artifact` 配置 `.png` 但实际输出 JSON）→ 自动替换为正确后缀。按警告提示的最终路径取用产物。
+
 ## SillyTavern 运行时
 
 以下错误发生在 SillyTavern 浏览器中，卡片已部署后运行时报错。

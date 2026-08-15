@@ -14,6 +14,8 @@
   - [validate-mvu](#validate-mvu)
   - [query](#query)
   - [patch](#patch)
+  - [export](#export)
+  - [split](#split)
 - [数据模型](#数据模型)
   - [EntryManifest](#entrymanifest)
   - [EntryManifestLeaf](#entrymanifestleaf)
@@ -36,8 +38,8 @@
 
 | 格式类型 | 文件类型 | 条目格式 |
 |---------|---------|---------|
-| 角色卡（PNG） | PNG | SillyTavern 标准格式，包含头像和世界书 |
-| 角色卡（JSON） | JSON | SillyTavern 标准格式，无头像 |
+| 角色卡（PNG） | PNG | `character_book` 嵌套格式，包含头像和世界书 |
+| 角色卡（JSON） | JSON | `character_book` 嵌套格式，无头像 |
 | 独立世界书 | JSON | 扁平格式 |
 
 输出格式由 `form` 和 `avatar` 决定：`form = "worldbook"` → 扁平 JSON；`form = "charactercard"` 且 `avatar` 非空 → PNG；`form = "charactercard"` 且 `avatar` 为空 → JSON。角色卡条目嵌套在 `extensions` 中；独立世界书使用扁平字段名（如 `order` 而非 `insertion_order`）。
@@ -141,7 +143,7 @@
 
 | 选项 | 适用命令 | 说明 |
 |------|---------|------|
-| `--state <path>` | pack, configure, init, validate-mvu, query, patch, unpack | 直接指定 state.json 路径，跳过项目查找 |
+| `--state <path>` | pack, configure, init, validate-mvu, query, patch, unpack, export | 直接指定 state.json 路径，跳过项目查找 |
 
 ### pack
 
@@ -163,7 +165,7 @@ node scripts/tavern-cards-forge.mjs pack <project> [--state <path>] [--output <p
 2. **编码检测**：读取每个内容文件时自动检测编码（内建于 `readFileText`，贯穿校验与构建阶段），非 UTF-8 文件报错退出
 3. **MVU 校验阶段**（`state.mvu === true` 时依次执行，全部通过才继续）：
    - **MVU 特征检测**：验证启用的脚本中引用了 `MagicalAstrogy/MagVarUpdate` 且存在 `[InitVar]` 条目
-   - **schema.ts 预检**（`state.zod` 存在时，路径通过 `state.zod.schemaPath` 定位）：拦截所有 `import` 语句
+   - **schema.ts 预检**（`state.zod` 存在时，路径通过 `state.zod.schemaPath` 定位）：拦截所有 `import` 语句；检测同一 `z.object({...})` 内重复字段键（含嵌套对象、`.prefault({...})`/`.default({...})` 默认值对象），命中即报错并列出键名、对象路径与全部出现行号
    - **Zod 脚本内容校验**（`state.zod` 存在时执行）：仅检测 `export type`
    - **[InitVar] 条目禁用校验**：所有 `[InitVar]` 条目必须显式设置 `enabled: false`
    - **initvar 一致性校验**（`state.zod` 存在时）：用 Zod Schema 校验 `[InitVar]` 条目 YAML 及 `initvar_overrides` 中所有文件
@@ -173,7 +175,9 @@ node scripts/tavern-cards-forge.mjs pack <project> [--state <path>] [--output <p
    - **Zod 脚本生成**：由 `state.zod` 驱动，从 `schemaPath` 重建；Zod 脚本内容直接注入产出物
    - **initvar_override 嵌入**：若 `state.initvar_overrides` 存在，对应开场白末尾的 `<UpdateVariable><initvar>` 块更新为 override YAML 内容
    - **状态栏占位符追加**（`state.mvu === true` 时）：`.txt` 开场白文件末尾自动追加 `<StatusPlaceHolderImpl/>`，内容已含占位符时跳过；`.md` 等其他后缀与内联文本不追加
-5. 输出格式选择与写出
+5. **写出**：按 [支持的格式](#支持的格式) 选择输出格式并写出。两个自动处置：
+   - `avatar` 非空但文件内容不是合法 PNG（损坏文件或非 PNG 图片）时，回退输出角色 JSON 卡并警告
+   - 产物路径后缀与实际格式不符时（如配置 `.png` 但实际输出 JSON），自动替换为正确后缀并警告，避免 JSON 写入 `.png` 后缀文件导致酒馆导入失败
 
 ```bash
 node scripts/tavern-cards-forge.mjs pack {project}
@@ -202,7 +206,7 @@ node scripts/tavern-cards-forge.mjs unpack <project> [--file <path>] [--output <
 **unpack 详细行为：**
 
 1. 读取输入 PNG/JSON 文件
-2. 自动识别格式类型（PNG→角色卡；JSON→检测扁平世界书 / 角色卡标准格式）
+2. 自动识别格式类型（PNG→角色卡；JSON→检测扁平世界书 / 角色卡 `character_book` 嵌套格式）
 3. 提取所有条目，转换为扁平的 EntryManifestLeaf 结构
 4. **MVU 自动检测**（`detectMvu`，characterMeta 合并后）：满足条件时 `mvu: true`
 5. 每个条目的 content 处理：YAML 对象→`世界书/{name}.yaml`，否则 `.txt`
@@ -293,7 +297,7 @@ node scripts/tavern-cards-forge.mjs init {project}
 node scripts/tavern-cards-forge.mjs validate-mvu <project> [--state <path>] [--initvar <path>]
 ```
 
-前置条件：`mvu: true`、`state.zod` 存在（含 `schemaPath` 指向 `schema.ts`）、待校验的 initvar YAML 文件已编写。schema.ts 路径通过 `state.zod.schemaPath` 定位。缺失时报错提示运行 `unpack` 自动填充。用 jiti 加载 `schema.ts`，注入全局 `z`（Zod v4）和 `_`（lodash）。项目自己的 `schema.ts` 应使用全局 `z` / `_`，不依赖本地 `node_modules`。
+前置条件：`mvu: true`、`state.zod` 存在（含 `schemaPath` 指向 `schema.ts`）、待校验的 initvar YAML 文件已编写。schema.ts 路径通过 `state.zod.schemaPath` 定位。缺失时报错提示运行 `unpack` 自动填充。用 jiti 加载 `schema.ts`，注入全局 `z`（Zod v4）和 `_`（lodash）；加载前执行与 pack 相同的 schema.ts 预检（拦截 `import`、检测重复字段键）。项目自己的 `schema.ts` 应使用全局 `z` / `_`，不依赖本地 `node_modules`。
 
 ```bash
 # 校验默认 initvar
@@ -354,6 +358,62 @@ node scripts/tavern-cards-forge.mjs patch {project} '[{"op":"remove","path":"/en
 node scripts/tavern-cards-forge.mjs patch {project} --file ./patches/update.json --dry-run
 # 从 stdin
 echo '[{"op":"remove","path":"/entryManifest/region/废弃地点"}]' | node scripts/tavern-cards-forge.mjs patch {project}
+```
+
+### export
+
+从 forge 项目 state 导出 SillyTavern 可逐项导入的三类资源：世界书、正则脚本、助手脚本。与 `pack` 不同，`export` 不产出整卡，而是按资源类型分别产出独立文件，且不受 `state.form` 限制书。
+
+```
+node scripts/tavern-cards-forge.mjs export <project> [--state <path>] [--output <dir>] [--kind <kind>]
+```
+
+| 选项 | 说明 |
+|------|------|
+| `--state <path>` | 直接指定 state.json 路径；此时 `<project>` 仅为占位符 |
+| `--output <dir>` | 输出目录；默认 `<当前目录>/<projectName>-resources` |
+| `--kind <kind>` | 资源类型（逗号分隔）：`worldbook`、`regex`、`helper`，或 `all`（默认） |
+
+产出文件：
+
+| 资源 | 文件 | 格式 |
+|------|------|------|
+| 世界书 | `<worldbookName>.json` | 扁平格式（ST 可直接导入） |
+| 正则脚本 | `regex-scripts/<scriptName>.json` | 单对象（与 ST 自家导出形态一致，逐文件导入） |
+| 助手脚本 | `helper-scripts/<scriptName>.json` | Tavern Helper Script 单对象，每脚本一文件 |
+
+```bash
+# 导出全部三类资源
+node scripts/tavern-cards-forge.mjs export {project}
+# 仅导出世界书（charactercard 项目同样可导出）
+node scripts/tavern-cards-forge.mjs export {project} --kind worldbook
+# 未注册项目时，使用占位符 + --state
+node scripts/tavern-cards-forge.mjs export adhoc --state ./state.json --output ./out
+```
+
+### split
+
+从已有角色卡（PNG 或 JSON）分离出 SillyTavern 可逐项导入的三类资源，无需先建 forge 项目；条目数、脚本数均与卡内完全一致。
+
+```
+node scripts/tavern-cards-forge.mjs split <project> [--file <path>] [--output <dir>] [--kind <kind>]
+```
+
+| 选项 | 说明 |
+|------|------|
+| `--file <path>` | 输入角色卡（PNG 或 JSON）；未注册项目时必需 |
+| `--output <dir>` | 输出目录；默认 `<当前目录>/<worldbookName>-split` |
+| `--kind <kind>` | 资源类型（逗号分隔）：`worldbook`、`regex`、`helper`，或 `all`（默认） |
+
+世界书名优先级：嵌入式 `character_book.name` → 卡名 → 文件名。产出文件结构同 `export`。
+
+`--file` 支持 PNG 角色卡与 JSON 文件。JSON 输入自动识别三种形态：角色 JSON 卡（V2/V3，含 `spec` + `data`）、独立世界书 JSON（扁平格式，原样落盘）、顶层 `entries` 数组（`character_book` 嵌套格式平铺）。PNG 与 JSON 角色卡的内嵌资源结构一致，分离后的产出字节级等价。
+
+```bash
+# 从角色卡（PNG 或 JSON）分离全部资源（adhoc 仅为占位符）
+node scripts/tavern-cards-forge.mjs split adhoc --file ./MyCharacter.png
+# 仅分离正则
+node scripts/tavern-cards-forge.mjs split adhoc --file ./MyCharacter.png --kind regex
 ```
 
 ## 数据模型
@@ -449,7 +509,7 @@ echo '[{"op":"remove","path":"/entryManifest/region/废弃地点"}]' | node scri
 
 ### 世界书格式对比
 
-| 含义 | SillyTavern 标准格式 | 扁平格式（独立世界书） |
+| 含义 | `character_book` 嵌套格式（角色卡内） | 扁平格式（独立世界书） |
 |------|---------------------|----------------------|
 | 条目顺序 | `insertion_order` | `order` |
 | 位置 | `extensions.position` | `position` |
