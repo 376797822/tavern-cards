@@ -61,7 +61,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 7. **MVU 一致性检查**（如需 MVU）→ 执行 `references/mvu/guide.md` 收尾步骤第 4 步
 8. **运行 configure**：`node scripts/tavern-cards-forge.mjs configure {project}`，自动推导运行时字段 → `references/configuration.md`（仅特殊需求时读取）
 9. **编写开场白**（角色卡）→ `references/contents-creation/first-message.md`
-   - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理）
+   - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理 / 表单式写入占位符，前端界面留到步骤 10）
    - 各项完成后按顺序注册到 state 的 `first_messages`
    - 对于有 `initvar_override` 的项，参考 `references/mvu/initvar.md#initvar_override`
 10. **UI 界面开发**（如使用 MVU）

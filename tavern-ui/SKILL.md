@@ -35,7 +35,8 @@ SillyTavern 本身不提供定制化的前端界面渲染能力。本 skill 的�
 
 ## 开发方式
 
-使用 [tavern_helper_template](https://github.com/StageDog/tavern_helper_template) 开发状态栏前端界面。
+使用 [tavern_helper_template](https://github.com/StageDog/tavern_helper_template) 开发消息楼层内渲染的前端界面。
+常见界面类型：**状态栏**（常驻界面，占位符 `<StatusPlaceHolderImpl/>`）与**开局表单**（交互表单开局，自定义占位符，见 `references/interactive-opening-form.md`）。
 
 ## 开发流程
 
@@ -126,7 +127,7 @@ const store = useDataStore();
 </script>
 ```
 
-> **变量访问方式**：前端版通过 `defineMvuDataStore` 读取 MVU 变量（见 store.ts 示例）。
+> **变量访问方式**：读写 MVU `stat_data` 有三种等价写法（推荐 `useDataStore`，响应式 + zod 校验），三者关系、同步机制与迁移注意点详见 `references/mvu-variables.md`。
 
 ### 5. CSS 色彩变量命名规范
 
@@ -290,6 +291,8 @@ tavern_helper_template 仓库已自带以下内容：
 ```
 references/
 ├── design-thinking.md                         —— 设计构思流程（感官词/交互人格/语义配色/组件构思）
+├── mvu-variables.md                           —— MVU 变量读写方式（useDataStore / 酒馆助手接口 / Mvu 函数，三写法关系、同步机制、迁移注意点）
+├── interactive-opening-form.md                —— 开局表单前端界面（交互表单开局：自定义占位符、读写 stat_data、提交触发生成与部署）
 └── environments/
     ├── tavern-helper-template.md              —— tavern_helper_template 开发环境（目录骨架/webpack/CI/实时预览/预注入变量）（按需查阅）
     └── tavern-helper-runtime.md               —— Tavern-Helper 运行时（iframe 隔离/生命周期/变量作用域/错误排查速查表）（按需查阅）
