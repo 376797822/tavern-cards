@@ -30,7 +30,7 @@
 
 ### typeLists 调整
 
-默认配置见下文。根据 `references/requirements/entry-types.md` 的条目类型说明和项目实际需求，确认默认配置是否需要调整。如需增添新条目类型，遵照从宏观到微观、从固定到动态的原则插入合适位置。不使用 MVU 时，`MVU` 不需要出现在列表中；EJS 条目内联 getvar，无需独立列表项。有固定玩法阶段时，可加入 `阶段指导`，且必须同时使用 EJS 控制。
+typeLists 的三个位置通常各有侧重：`before_char` 放宏观条目，`after_char` 放人设类条目，`depth` 放运行时按需注入的条目。默认配置见下文。根据 `references/requirements/entry-types.md` 的条目类型说明和项目实际需求，确认默认配置是否需要调整。如需增添新条目类型，遵照从宏观到微观、从固定到动态的原则插入合适位置。不使用 MVU 时，`MVU` 不需要出现在列表中；EJS 条目内联 getvar，无需独立列表项。有固定玩法阶段时，可加入 `阶段指导`，且必须同时使用 EJS 控制。
 
 调整 typeLists 时，必须同步调整 strategyThresholds。configure 只会为出现在 strategyThresholds 中的类型推导 strategy；字段含义见 `references/configuration.md`。
 

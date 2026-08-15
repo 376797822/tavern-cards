@@ -52,7 +52,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
    - 从材料转化时先执行 `references/conversion.md`
 2. **项目创建**：执行 `node scripts/tavern-cards-forge.mjs init {project}` 创建目录结构、状态文件与模板 → `references/project-setup.md`
 3. **需求对齐：世界/角色/条目**：收集世界信息、角色信息、条目规划、写作风格，产出编写规划文档 `创作规划.yaml`（项目目录下）→ `references/requirements.md`
-4. **创建条目**：按创作规划依次编写，每条写完立即注册（前置 CoT 自检 + `check-agent` 禁词扫描 + DoubleCheck）→ `references/composition.md`
+4. **创建条目**：按创作规划依次编写，每条创作前做前置 CoT 自检，写完立即注册；按 typeLists 位置分组，每个位置的条目全部完成后调用 `check-agent` 做禁词扫描，全部条目完成后做 DoubleCheck → `references/composition.md`
    - 前置必读：`references/rules.md`（正面规则）和 `references/conventions.md`（注册约定）
 5. **编写 MVU 变量**（如需）→ `references/mvu/guide.md`，完成后按收尾步骤复制模板、应用 patch、校验
 6. **EJS 条件与段落控制编写 + EJS 收尾检查**（如需 EJS）→ `references/ejs/guide.md`
