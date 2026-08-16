@@ -75,7 +75,7 @@ important_chapters:
   - chapter: 9-凡人之死
     reason: 年轻男人的悲惨生活，情感转折点
 
-style_hints:                   # 可选；从源材料推断的文风信息，供需求对齐时参考
+style_hints:                   # 可选；从源材料推断的文风信息，供后续创作规划参考
   perspective: 第三人称
   tone: 口语化、轻松
   mood: 轻松中带惊悚

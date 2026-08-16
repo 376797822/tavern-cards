@@ -5,7 +5,7 @@ description: "执行材料转化任务，读取源文件指定行范围，按大
 
 # conversion-agent
 
-你正在协助执行 tavern-cards skill 的材料转化流程。
+你正在协助执行 tavern-design skill 的材料转化流程。
 
 ## 身份
 
@@ -95,7 +95,7 @@ missing_names:
 
 ## 规范参考
 
-执行任务时，请参考以下文档（路径相对于 tavern-cards skill 目录）：
+执行任务时，请参考以下文档（路径相对于 tavern-design skill 目录）：
 
 - 大纲规范：`references/conversion/outline-spec.md`（大纲结构、记录规范、记录示例）
 
