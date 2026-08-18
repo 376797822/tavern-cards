@@ -2,7 +2,35 @@
 
 本项目基于 [ai4rpg/tavern-cards](https://github.com/ai4rpg/tavern-cards) 的 fork。版本号从 v1.0 开始记录本 fork 的自定义改动，跟随上游更新时在对应版本内注明。
 
-## v1.2 — 上游同步：MVU 修复 / 开场白增强 / 修改流程重构（当前版本）
+## v1.3 — 上游同步：UI 模板 / 表单式开局 / 打包增强（当前版本）
+
+> 合并上游 `a053e54..ccc55f6`，共 5 个提交，涉及 `tavern-cards` 与 `tavern-ui` 两个 skill。本 fork 的自定义模版未受影响，自动合并零冲突。
+
+### 上游变更（tavern-cards）
+
+- **表单式开局** [`6dcc87c`]：`first-message.md` 新增**交互表单式**开场白（表单式/叙事+表单组合两种形态，自定义占位符挂载 + 替换/隐藏正则）；同步扩展 `entries-dynamics-style.md`
+- **打包命令增强** [`c38a226`]：forge CLI 新增 **export / split 命令**、无效头像时 pack JSON 回退、重复 schema key 检测；同步更新 `manual.md`、`error-handling.md`、`modify-existing.md`、`revision.md`、`mvu/schema.md`
+- **质量扫描时机重构** [`ccc55f6`]：词质量扫描改为**每个 typeLists 位置完成后运行**（位置级扫描），全局扫描改为可选；同步更新 `composition.md`、`SKILL.md`、`project-setup.md`
+
+### 上游变更（tavern-ui）
+
+- **vue-tsc 静态检查门禁** [`f5f57c5`]：前端开发流程加入 vue-tsc 类型检查关卡，数据丢失类症状路由到该检查
+- **Live Server CORS 指引** [`e300ea8`]：新增跨域 iframe 预览的 CORS 配置指南，补充 vue-tsc 与 schema 字段故障排查
+- **交互表单与 MVU 变量文档** [`6dcc87c`]：新增 `references/interactive-opening-form.md`（开局表单前端实现，含 `defineMvuDataStore` 读写、`createChatMessages` + `triggerSlash` 提交触发 AI）与 `references/mvu-variables.md`（MVU 变量访问指南）
+
+### 涉及文件
+
+`tavern-cards/`：`SKILL.md`、`composition.md`、`first-message.md`、`error-handling.md`、`manual.md`、`modify-existing.md`、`mvu/schema.md`、`project-setup.md`、`entries-dynamics-style.md`、`revision.md`、`tavern-cards-forge.mjs`
+
+`tavern-ui/`：`SKILL.md`、`tavern-helper-runtime.md`、`tavern-helper-template.md`、`interactive-opening-form.md`（新增）、`mvu-variables.md`（新增）
+
+### 未改动
+
+本 fork 的五种角色整合模版（主角/NPC/功能/家庭/组织）保持不变，合并无冲突。
+
+---
+
+## v1.2 — 上游同步：MVU 修复 / 开场白增强 / 修改流程重构
 
 > 合并上游 `49ebe70..a053e54`，共 3 个提交。本 fork 的自定义模版（v1.0/v1.1）未受影响，自动合并零冲突。
 
