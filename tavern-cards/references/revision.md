@@ -44,7 +44,7 @@
 4. 如涉及 MVU 结构变更，按 `references/mvu/guide.md#修改流程` 执行变更传播和校验。
    - 更新 EJS 条目内的 getvar 路径（如有 EJS 引用该变量）
    - 运行同步检查命令校验 initvar 与 schema.ts 一致
-   - 编辑 `schema.ts` 加字段时保持同一 `z.object` 内键名唯一；如报重复字段键错误，处置见 `references/error-handling.md#mvu-校验失败`
+   - 调 `schema-agent` 修改 schema.ts（schema-agent 会自查同一 `z.object` 内键名唯一）；如 `validate-mvu` / `pack` 报重复字段键错误，处置见 `references/error-handling.md#mvu-校验失败`
 
 ## 条目间一致性冲突
 

@@ -52,6 +52,16 @@ description: "角色卡与世界书的叙事设计阶段：大方向讨论、世
 
 展示 `design-spec.md` 并暂停等待用户确认。用户确认后，告知用户接下来可交给 tavern-cards 进行项目创建与创作规划。
 
+## 子代理
+
+调用时由 Agent harness 注入任务，主代理在 task 字符串里携带下表「输入」一列的参数，并按下表「输出」一列处理返回。
+
+| 子代理 | 作用 | 输入 | 输出 |
+|--------|------|------|------|
+| conversion-agent | 材料转化分片处理 | 源文件路径、行范围、输出路径；前序大纲片段路径（如有） | 按规范写入输出路径，并运行 `scripts/validate-conversion-outline.mjs` 自验片段；另返回 `missing_names` 供主代理合并 |
+
+长文本分片调用与合并的衔接见 `references/conversion.md`、`references/conversion/outline.md`。
+
 ## 技术细节边界
 
 `design-spec.md` 只记录大方向；MVU/EJS、typeLists、头像、UI 模式、变量结构、条目级规划等技术细节由 tavern-cards 项目创建步骤处理。

@@ -30,30 +30,30 @@
 
 - 任一支持 skill 的 Coding Agent
 - Node.js（用于 CLI 工具）
-- Windows 用户: 强烈建议安装 **Git for Windows**（自带 Git Bash）中启动 Agent。项目的 bash 命令（`sed`、`diff`、管道等）依赖 bash 环境。
+- Windows 用户: 强烈建议安装 **Git for Windows**（自带 Git Bash），并在其 Git Bash 中启动 Agent。项目的 bash 命令（`sed`、`diff`、管道等）依赖 bash 环境。
 - 确保你的 Agent 已配置正确的 API（如 Anthropic API Key）
 
 ## 安装
 
 1. 克隆仓库到本地
-2. 根据你使用的 Agent，将 `tavern-design/`、`tavern-cards/`、`tavern-ui/` 目录放入对应位置：
-   - Claude Code: 放入 `.claude/skills/` 目录
-   - Opencode: 放入 `.opencode/skills/` 或 `.agents/skills/` 目录
-   - Pi: 放入 `.pi/skills/` 或 `.agents/skills/` 目录
+2. 根据你使用的 Agent，将 `tavern-design/`、`tavern-cards/`、`tavern-ui/` 三个 skill 目录**链接**到对应位置（建议符号链接，便于随仓库更新）：
+   - Claude Code: `~/.claude/skills/`（系统）或 `.claude/skills/`（项目）
+   - Opencode: `~/.opencode/skills/` 或 `~/.agents/skills/`（系统）；`.opencode/skills/` 或 `.agents/skills/`（项目）
+   - Codex: `~/.codex/skills/`（系统）或 `.codex/skills/`（项目）
+   - Pi: `~/.pi/agent/skills/`（系统）或 `.pi/skills/`（项目）
    - 其他 Agent: 放入 Agent 指定的 skill 目录
-3. 配置子代理（用于禁词扫描、长文本大纲提取、叙事式开场白创作）：
-   - 将 `tavern-cards/agents/*.md` 与 `tavern-design/agents/*.md` 文件链接到你的 Coding Agent 的 agents 目录。
-     - Claude Code: 
-       - Linux/macOS: `~/.claude/agents`
-       - Windows: `%USERPROFILE%\.claude\agents`
-     - Opencode:
-       - Linux/macOS: `~/.opencode/agents`
-       - Windows: `%USERPROFILE%\.opencode\agents`
-     - Pi:
-       - Linux/macOS: `~/.pi/agent/agents/`
-       - Windows: `%USERPROFILE%\.pi\agent\agents\`
-     - 其他 Agent: 创建到 Agent 指定的 agents 目录
-4. 重启或 reload 你的 Coding Agent（不同软件叫法可能不同，如 Claude Code 使用 `/reload-plugins` 命令）
+   > Windows 下 `~` 指向 `%USERPROFILE%`，在 Git Bash、PowerShell 中可直接使用。
+3. 配置子代理（用于禁词扫描、长文本大纲提取、叙事式开场白创作、MVU 变量结构编写）：
+   - 将仓库根的 `agents/*.md` 文件**复制**到你的 Coding Agent 的 agents 目录（用复制而非链接：后续可能要在副本 frontmatter 添加模型字段，避免改动原文件）。agents 目录与上一步的 skills 目录同父目录，路径末段从 `skills` 换成 `agents` 即可（如 `~/.claude/skills/` → `~/.claude/agents/`）。
+   - **Codex 特例**：Codex 的自定义 agent 用 **TOML** 文件（`~/.codex/agents/` 或 `.codex/agents/`），每个 agent 一个 `.toml`，必须含 `name`、`description`、`developer_instructions` 三个字段，`model`、`model_reasoning_effort` 等可选。仓库的 `.md` 文件不能直接被 Codex 加载，需要转换格式：把 `.md` 正文作为 `developer_instructions` 的值，frontmatter 的 `name`/`description` 直接对应。安装时可让你的 Agent 完成此转换。
+   - **Pi 特例**：Pi 的子代理依赖官方的 **subagent 扩展**，需先按 pi 文档安装该扩展，否则 Pi 无法识别 `~/.pi/agent/agents/` 下的 agent。
+   - **可选：配置子代理模型与推理力度**——机械任务（如禁词扫描 `check-agent`、长文本整理 `conversion-agent`）可以用更廉价的模型、中等的推理力度。安装时可以向你的 Agent 询问是否需要按此优化，若需要，Agent 会在复制的 `.md` 文件 frontmatter（Codex 为 `.toml`）中添加对应字段，各 Agent 的取值格式：
+     - Claude Code：`model` 接别名，`effort` 接推理力度，如 `model: haiku`、`effort: xhigh`（model 可选 `sonnet` / `opus` / `haiku` / `inherit`；effort 可选 `low` / `medium` / `high` / `xhigh` / `max`，默认继承会话）
+     - Opencode：`model` 接 `provider/model-id`，`variant` 接推理力度，如 `model: opencode/deepseek-v4-flash`、`variant: xhigh`（可用值随模型/provider 而定，如 OpenAI 系 `none` / `minimal` / `low` / `medium` / `high` / `xhigh`，Anthropic 系 `high` / `max`）
+     - Pi：`model` 接 `provider/model-id`，并在 model 值末尾用 `:level` 内嵌推理力度，如 `model: deepseek/deepseek-v4-flash:xhigh`（可选 `off` / `minimal` / `low` / `medium` / `high` / `xhigh` / `max`）
+     - Codex：`model` 接模型名，`model_reasoning_effort` 接推理力度（TOML 语法），如 `model = "gpt-5.6-luna"`、`model_reasoning_effort = "high"`（可选 `minimal` / `low` / `medium` / `high` / `ultra`）
+     - 其他 Agent：参照其文档格式
+4. 重启或 reload 你的 Coding Agent（不同软件命令可能不同，如 Claude Code 使用 `/reload-plugins` 命令）
 5. 测试安装是否完整（以下五项都应通过）：
    - **测试 tavern-cards 加载**：向你的 Agent 发送以下消息
      ```
@@ -83,7 +83,7 @@
 6. 准备写卡工作区
    - 选一个位置创建一个空目录，作为写卡工作区根目录；后续所有项目会放在这个目录下
    - 把 `tavern-cards/assets/cardrc.json` 复制到工作区根目录，并重命名为 `.cardrc.json`
-   - 后续用你的 Coding Agent 在这个工作区根目录启动会话进行写卡；`tavern-cards-forge` 会在工作区根目录下自动创建 `cards/{Project}/` 项目目录
+   - 如果之前在当前项目目录安装测试，把整个 `.claude/`（或其他 Agent 配置目录）移动到写卡工作区根目录，skill 与子代理配置一并迁移
 7. 正式使用 skill 时，建议开一个新会话，避免上下文干扰
 
 ## 已有项目迁移

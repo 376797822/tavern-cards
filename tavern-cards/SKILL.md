@@ -52,7 +52,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 2. **创作规划**：以 `design-spec.md`（及 `故事大纲.yaml`，如有）为输入，展开具体世界信息、角色信息、条目规划、写作风格，产出编写规划文档 `创作规划.yaml`（项目目录下）→ `references/requirements.md`
 3. **创建条目**：按创作规划依次编写，每条创作前做前置 CoT 自检，写完立即注册；按 typeLists 位置分组，每个位置的条目全部完成后调用 `check-agent` 做禁词扫描，全部条目完成后做 DoubleCheck → `references/composition.md`
    - 前置必读：`references/rules.md`（正面规则）和 `references/conventions.md`（注册约定）
-4. **编写 MVU 变量**（如需）→ `references/mvu/guide.md`，完成后按收尾步骤复制模板、应用 patch、校验
+4. **编写 MVU 变量**（如需）：调 `schema-agent` 编写 `schema.ts`，主代理按顺序编写 initvar.yaml 与 变量更新规则.yaml → `references/mvu/guide.md`，完成后按收尾步骤复制模板、应用 patch、校验
 5. **EJS 条件与段落控制编写 + EJS 收尾检查**（如需 EJS）→ `references/ejs/guide.md`
   - 用 getvar() 读取变量、@@private + const 在条目内定义局部短名
   - 遇到 EJS 运行时报错（如 `xxx is not defined`、`Identifier ... has already been declared`）先读 `references/error-handling.md#SillyTavern-运行时`
@@ -73,6 +73,18 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 ## 状态文件
 
 每个项目在根目录维护 `tavern-cards-state.json`，记录项目属性和条目清单。完整字段定义见 `references/type/state.ts`。
+
+## 子代理
+
+调用时由 Agent harness 注入任务，主代理在 task 字符串里携带下表「输入」一列的参数，并按下表「输出」一列处理返回。
+
+| 子代理 | 作用 | 输入 | 输出 |
+|--------|------|------|------|
+| check-agent | 禁词扫描 | 需检查的全部条目的文件路径；附内容类型与所属角色/世界观提示 | 「通过 / 不通过」；不通过时按条目给出违规类型、原文、建议 |
+| schema-agent | 编写或修改 `schema.ts` | 项目目录路径、创作规划路径、schema.ts 路径（后两者未提供时默认在项目目录下）；变更场景另传变更类型与变量路径 | 写入 `schema.ts`；变更场景另返回「需主代理同步」清单 |
+| first-message-agent | 叙事式开场白 | 创作规划路径、当前项索引；启用 MVU 时附 initvar 路径（override 或默认） | 写入当前项 `output_path`，并返回正文与自查摘要 |
+
+各调用点的具体衔接见 `references/composition.md`、`references/mvu/guide.md`、`references/contents-creation/first-message.md`。
 
 ## 工具参考
 
