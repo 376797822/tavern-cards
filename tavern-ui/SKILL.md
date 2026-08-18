@@ -35,7 +35,8 @@ SillyTavern 本身不提供定制化的前端界面渲染能力。本 skill 的�
 
 ## 开发方式
 
-使用 [tavern_helper_template](https://github.com/StageDog/tavern_helper_template) 开发状态栏前端界面。
+使用 [tavern_helper_template](https://github.com/StageDog/tavern_helper_template) 开发消息楼层内渲染的前端界面。
+常见界面类型：**状态栏**（常驻界面，占位符 `<StatusPlaceHolderImpl/>`）与**开局表单**（交互表单开局，自定义占位符，见 `references/interactive-opening-form.md`）。
 
 ## 开发流程
 
@@ -126,7 +127,7 @@ const store = useDataStore();
 </script>
 ```
 
-> **变量访问方式**：前端版通过 `defineMvuDataStore` 读取 MVU 变量（见 store.ts 示例）。
+> **变量访问方式**：读写 MVU `stat_data` 有三种等价写法（推荐 `useDataStore`，响应式 + zod 校验），三者关系、同步机制与迁移注意点详见 `references/mvu-variables.md`。
 
 ### 5. CSS 色彩变量命名规范
 
@@ -154,9 +155,25 @@ CSS 色彩变量必须使用**功能语义**命名，禁止使用视觉描述命
 
 ### 6. 本地测试
 
+#### 静态类型检查
+
+编码完成后、启动预览与打包前，先跑一次 vue-tsc 静态类型检查，通过后再进入本地预览与打包（命令与噪音处理见 `references/environments/tavern-helper-template.md` 的「8.4 vue-tsc 静态类型检查」）：
+
+```bash
+npx vue-tsc --noEmit 2>&1 | grep "error TS" | grep -E "^src/"
+```
+
+报「前端引用了 schema 中不存在的字段」类错误时，先判断该字段是设计内状态（补 schema 字段）还是前端临时内部状态（改前端引用），无法判断时询问用户以哪一侧为准，确认后再修改。
+
+> `schema.ts` 的修改按 tavern-cards skill 的 `references/mvu/guide.md#修改流程` 执行，并保持模板仓库与用户项目两处副本一致。
+
+#### 启动本地预览
+
 先询问用户是否安装了 VS Code 的 Live Server 扩展。
 
-如已安装，指导用户在 tavern_helper_template 根目录右键，选择"Open with Live Server"。Live Server 自动注入 CORS 头并启动 HTTP 服务，默认端口 `5500`。
+如已安装，指导用户以 tavern_helper_template 为 VS Code 工作区打开（**根目录固定为当前工作区目录**）。
+
+> **新版 Live Server 默认不注入 CORS 头**，症状细节与 `.vscode/settings.json` 配置见 `references/environments/tavern-helper-template.md` 的「跨端口 CORS」。
 
 如未安装，自行启动一个带 CORS 头的静态文件服务器，工作目录为 tavern_helper_template 根目录。
 
@@ -168,7 +185,7 @@ CSS 色彩变量必须使用**功能语义**命名，禁止使用视觉描述命
 pnpm watch
 ```
 
-#### 配置实时预览
+#### 配置预览正则
 
 将项目中的 `正则/状态栏界面.html` 临时改为加载本地服务器。该文件首尾各占一行纯三反引号（` ``` `，不带语言标记）作为代码块标记，修改时需保留这两行。
 
@@ -274,6 +291,8 @@ tavern_helper_template 仓库已自带以下内容：
 ```
 references/
 ├── design-thinking.md                         —— 设计构思流程（感官词/交互人格/语义配色/组件构思）
+├── mvu-variables.md                           —— MVU 变量读写方式（useDataStore / 酒馆助手接口 / Mvu 函数，三写法关系、同步机制、迁移注意点）
+├── interactive-opening-form.md                —— 开局表单前端界面（交互表单开局：自定义占位符、读写 stat_data、提交触发生成与部署）
 └── environments/
     ├── tavern-helper-template.md              —— tavern_helper_template 开发环境（目录骨架/webpack/CI/实时预览/预注入变量）（按需查阅）
     └── tavern-helper-runtime.md               —— Tavern-Helper 运行时（iframe 隔离/生命周期/变量作用域/错误排查速查表）（按需查阅）

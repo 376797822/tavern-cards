@@ -23,6 +23,14 @@ node scripts/tavern-cards-forge.mjs unpack adhoc --file {用户文件路径} --o
   - 特殊组件（正则脚本数量、酒馆助手脚本、开场白数量、是否检测到 MVU）
   - 当前所有条目均在 `unknown` 类型下，文件平铺于 `世界书/`
 
+**参考资源提取**：如果用户提供的卡不是修改目标，而是作为前端界面的参考样例（如借鉴状态栏样式），用 `split` 按需提取正则与助手脚本，无需走完整的 unpack 建项目流程：
+
+```bash
+node scripts/tavern-cards-forge.mjs split adhoc --file {参考卡} --kind regex,helper --output ./ref
+```
+
+提取出的正则与助手脚本仅作样式参考；前端界面选型见 `references/ui/regex-scripts.md`（正则写法）与 `references/ui/text.md`（纯文本状态栏）。
+
 ### 2. 需求对齐
 
 询问用户修改意图，归类为：

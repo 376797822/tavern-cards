@@ -54,7 +54,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
    - 从材料转化时先执行 `references/conversion.md`
 2. **项目创建**：执行 `node scripts/tavern-cards-forge.mjs init {project}` 创建目录结构、状态文件与模板 → `references/project-setup.md`
 3. **需求对齐：世界/角色/条目**：收集世界信息、角色信息、条目规划、写作风格，产出编写规划文档 `创作规划.yaml`（项目目录下）→ `references/requirements.md`
-4. **创建条目**：按创作规划依次编写，每条写完立即注册（前置 CoT 自检 + `check-agent` 禁词扫描 + DoubleCheck）→ `references/composition.md`
+4. **创建条目**：按创作规划依次编写，每条创作前做前置 CoT 自检，写完立即注册；按 typeLists 位置分组，每个位置的条目全部完成后调用 `check-agent` 做禁词扫描，全部条目完成后做 DoubleCheck → `references/composition.md`
    - 前置必读：`references/rules.md`（正面规则）和 `references/conventions.md`（注册约定）
 5. **编写 MVU 变量**（如需）→ `references/mvu/guide.md`，完成后按收尾步骤复制模板、应用 patch、校验
 6. **EJS 条件与段落控制编写 + EJS 收尾检查**（如需 EJS）→ `references/ejs/guide.md`
@@ -63,7 +63,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 7. **MVU 一致性检查**（如需 MVU）→ 执行 `references/mvu/guide.md` 收尾步骤第 4 步
 8. **运行 configure**：`node scripts/tavern-cards-forge.mjs configure {project}`，自动推导运行时字段 → `references/configuration.md`（仅特殊需求时读取）
 9. **编写开场白**（角色卡）→ `references/contents-creation/first-message.md`
-   - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理）
+   - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理 / 表单式写入占位符，前端界面留到步骤 10）
    - 各项完成后按顺序注册到 state 的 `first_messages`
    - 对于有 `initvar_override` 的项，参考 `references/mvu/initvar.md#initvar_override`
 10. **UI 界面开发**（如使用 MVU）
