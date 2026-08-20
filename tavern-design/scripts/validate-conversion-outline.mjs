@@ -7750,7 +7750,7 @@ var jsonOutput = options.has("--json");
 if (options.has("--help") || positionals.length < 1) {
   console.log(`Usage: node validate-conversion-outline.mjs <outline.yaml> <source.txt> [--no-quotes] [--strict] [--json]
 
-Validates a tavern-cards material-conversion outline. Dependencies are bundled in the distributed CLI.`);
+Validates a tavern-design material-conversion outline. Dependencies are bundled in the distributed CLI.`);
   process.exit(positionals.length < 1 && !options.has("--help") ? 1 : 0);
 }
 var outlinePath = path.resolve(positionals[0]);

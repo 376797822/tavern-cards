@@ -1,6 +1,10 @@
 # 需求对齐
 
-任何项目开始前的信息收集阶段。先收集项目属性并创建项目，再收集世界/角色/条目信息，最后产出 `创作规划.yaml`。
+本阶段从 tavern-design 已产出的 `design-spec.md` 开始，完成项目创建与创作规划，做技术收尾与具体信息展开，最终产出 `创作规划.yaml`。
+
+## 前置要求
+
+开始前确认 `cards/{Project}/design-spec.md` 已存在。如果还没有，先调用 **tavern-design** skill 完成大方向讨论与剧情设计，再回到本流程。
 
 ## 铁律
 
@@ -10,7 +14,7 @@
 
 ## 对齐模式
 
-对齐阶段开头询问用户偏好：
+创作规划阶段开头询问用户偏好：
 
 > 你希望先粗略规划、细节留到创作时再确认，还是一次性把所有信息都定下来？
 
@@ -41,14 +45,14 @@ variables:                    # 待细化：取值范围和格式约束待创作
 
 ## 流程
 
-1. 读取 `references/project-setup.md`，完成项目属性收集并创建项目。
-2. 读取 `references/requirements/world-characters.md`，收集世界与角色信息。
-3. 读取 `references/requirements/entries-dynamics-style.md`，规划条目、MVU/EJS、写作风格与开场白。
+1. 读取 `references/project-setup.md`，从 `design-spec.md` 读取项目基础属性，完成技术收尾并创建项目。
+2. 读取 `references/requirements/world-characters.md`，以 `design-spec.md` 为基础展开具体世界与角色信息。
+3. 读取 `references/requirements/entries-dynamics-style.md`，以 `design-spec.md` 的风格意向、互动/动态概念为输入，规划条目、MVU/EJS、写作风格与开场白。
 4. 读取 `references/requirements/planning-yaml.md`，编写项目目录下的 `创作规划.yaml`。
 
 ## 编写规划文档
 
-需求对齐完成后，**必须**产出编写规划文档。
+创作规划完成后，**必须**产出编写规划文档。
 
 保存路径：项目目录下的 `创作规划.yaml`
 
@@ -64,7 +68,7 @@ variables:                    # 待细化：取值范围和格式约束待创作
 
 ## 参考
 
-- `references/project-setup.md`：项目属性收集、typeLists 调整与项目创建
+- `references/project-setup.md`：从 `design-spec.md` 读取属性、技术收尾、typeLists 调整与项目创建
 - `references/requirements/world-characters.md`：世界与角色信息收集
 - `references/requirements/entries-dynamics-style.md`：条目、MVU/EJS、风格与开场白规划
 - `references/requirements/planning-yaml.md`：`创作规划.yaml` 完整结构和示例

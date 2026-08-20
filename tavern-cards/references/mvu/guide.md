@@ -21,7 +21,7 @@ schema.ts ──────► Zod 脚本（pack 时由 state.zod 驱动，从 
 配置合并（entryManifest/mvu、脚本注册、正则注册等）：收尾时通过 JSON Patch 注入
 ```
 
-编写顺序：schema.ts → initvar.yaml → 变量更新规则.yaml。各阶段详见对应文档。
+编写顺序：schema.ts（调 `schema-agent` 编写）→ initvar.yaml → 变量更新规则.yaml。各阶段详见对应文档。
 
 ## MVU 变量特殊前缀
 
@@ -49,7 +49,7 @@ MVU 条目名称使用前缀标记功能定位和双 AI 发送路由，详见 `r
 
 | 阶段 | 文档 | 产出 |
 |------|------|------|
-| 1 | `references/mvu/schema.md` | schema.ts |
+| 1 | `references/mvu/schema.md` | schema.ts（由 `schema-agent` 编写） |
 | 2 | `references/mvu/initvar.md` | initvar.yaml |
 | 3 | `references/mvu/update-rules-guide.md` | 变量更新规则.yaml |
 | 4 | 收尾（见下方） | 模板文件 + 配置合并 + 校验 |
@@ -99,13 +99,13 @@ MVU 和 EJS 编写完成后，检查 MVU 变量系统与已编写世界书条目
 
 #### schema.ts 与条目内容覆盖
 
-加载 `references/mvu/schema.md`（schema 编写原则），对照 schema.ts 中定义的变量结构，检查：
+对照 schema.ts 中定义的变量结构，检查：
 
 - schema 中的枚举值或阶段说明——是否有对应的世界书条目描述了这些值/阶段的含义？
 - schema 中的变量取值范围（如"当前场景"的可能值）——每个取值是否有对应的地理条目或场景描述？
 - 变量值的潜在变化方向（如"魔力同步率提高后会触发什么"）——世界书中是否有对应的事件/机制描述？
 - schema 中关键路径与 entryManifest 条目能否对应——有取值但无描述则需补充世界书条目
-- schema.ts 是否遵守了 `references/mvu/zod-rule.yaml` 中的 Zod 4 规则（幂等性、z.enum 节制、首选项类型等）
+- schema.ts 是否遵守了 `references/mvu/zod-rule.yaml` 中的 Zod 4 规则
 
 发现不一致时（如 schema 有取值但世界书未描述），优先在世界书条目中补充对应内容。
 
@@ -163,8 +163,8 @@ MVU 和 EJS 编写完成后，检查 MVU 变量系统与已编写世界书条目
 ### 执行步骤
 
 1. **确认变更类型**：用户要新增/重命名/删除/修改哪个变量，在传播矩阵中找到对应行
-2. **按矩阵变更文件**：修改 schema.ts 后，同步更新矩阵中标注「✓」的其他文件
-3. **更新 EJS 条目内 getvar 路径**（如有 EJS 条目引用该变量）：新增/改名/删除变量时，同步更新所有 EJS 条件与段落控制中的 stat_data 路径
+2. **按矩阵变更文件**：调 `schema-agent` 修改 schema.ts，主代理同步更新矩阵中其他标注「✓」的文件（详见步骤 3-5）；schema-agent 的返回中含「需主代理同步」清单，据此核对本步骤的同步范围
+3. **更新 EJS 条目内 stat_data 路径**（如有 EJS 条目引用该变量）：新增/改名/删除变量时，同步更新所有 EJS 条件和段落控制里引用的 stat_data 路径
 4. **同步创作规划.yaml**：使 `mvu.variables` 段与最新的 schema.ts 一致
 5. **补充世界书条目**（如有）：如果新增了 enum 值或取值范围，检查世界书中是否有对应条目描述其含义
 6. **校验**：

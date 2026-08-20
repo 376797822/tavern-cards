@@ -1,11 +1,11 @@
 ---
 name: tavern-cards
-description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角色信息、世界观、NPC、场景、事件、文风、MVU 变量、EJS 方案等）。覆盖角色卡内嵌世界书和独立世界书，支持从零创作和从现有材料转化。确保在以下情况也使用此 skill：用户提到'角色设定'、'人设卡'、'worldlore'、'character card'、'角色卡'、'酒馆世界书'、'SillyTavern'、'世界书条目'、'世界书配置'、'蓝灯'、'绿灯'、'角色条目'、'世界观设定'、'NPC设定'等关键词时，即使用户没有明确说'世界书'也应触发。当用户要编写角色基础信息、性格调色盘、三面性、二次解释、多阶段调色盘、世界观、文风指导等创作流程时也应触发。当用户提到'MVU'、'变量系统'、'schema.ts'、'变量更新'、'initvar'、'变量结构'、'tavern-cards-forge'等关键词时也应触发。"
+description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角色信息、世界观、NPC、场景、事件、文风、MVU 变量、EJS 方案等）。覆盖角色卡内嵌世界书和独立世界书，在 tavern-design 产出 design-spec.md 后继续项目创建与创作规划。确保在以下情况也使用此 skill：用户提到'角色设定'、'人设卡'、'worldlore'、'character card'、'角色卡'、'酒馆世界书'、'SillyTavern'、'世界书条目'、'世界书配置'、'蓝灯'、'绿灯'、'角色条目'、'世界观设定'、'NPC设定'等关键词时，即使用户没有明确说'世界书'也应触发。当用户要编写角色基础信息、性格调色盘、三面性、二次解释、多阶段调色盘、世界观、文风指导等创作流程时也应触发。当用户提到'MVU'、'变量系统'、'schema.ts'、'变量更新'、'initvar'、'变量结构'、'tavern-cards-forge'等关键词时也应触发。"
 ---
 
 # SillyTavern 角色卡与世界书编写
 
-帮助用户创建和编辑 SillyTavern 角色卡与世界书的内容和配置。覆盖角色人设编写、世界观构建、MVU 变量、EJS 动态方案、条目配置、开场白创作等全流程。聚焦于内容创作和流程编排，涉及 schema.ts、EJS 模板以及 MVU 的酒馆助手脚本，但不涉及其他酒馆助手脚本的编写。
+帮助用户在已有 `design-spec.md` 的基础上创建和编辑 SillyTavern 角色卡与世界书的内容和配置。覆盖角色人设编写、世界观构建、MVU 变量、EJS 动态方案、条目配置、开场白创作等全流程。聚焦于内容创作和流程编排，涉及 schema.ts、EJS 模板以及 MVU 的酒馆助手脚本，但不涉及其他酒馆助手脚本的编写。
 
 ## 设计原则
 
@@ -27,7 +27,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 判断三个维度，组合决定流程：
 
 1. **任务阶段**：创建 / 修改 / 评估
-2. **创建来源**（仅创建阶段）：从零 / 从材料转化
+2. **创建来源**（仅创建阶段）：从零 / 从材料转化——两者都需先由 tavern-design 产出 `design-spec.md`
 3. **任务范围**：完整项目 / 局部任务
 
 **写角色前的必问判断**：流程涉及编写/修改角色、家庭或组织时，先向用户确认采用**整合模版**（主角/深度互动 NPC/功能级角色/家庭/组织用 `references/contents-creation/character/main-character.md` 等）还是**原本拆分流程**（基础信息+性格调色盘+三面性+二次解释）。默认用原本拆分流程，详见 `references/composition.md` 角色部分。
@@ -38,8 +38,7 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 
 | 组合 | 流程 |
 |------|------|
-| 创建 + 从零 + 完整项目 | 需求对齐：项目属性 → 项目创建(init) → 需求对齐：世界/角色/条目 → 条目创作 |
-| 创建 + 从材料 + 完整项目 | 转化标注（`references/conversion.md`）→ 需求对齐：项目属性 → 项目创建(init) → 需求对齐：世界/角色/条目 → 条目创作 |
+| 创建 + 完整项目（从零或从材料） | 前置要求 `design-spec.md`（由 tavern-design 产出）→ 项目创建(init) → 创作规划 → 条目创作 |
 | 创建 + 局部任务 | 直接定位创作规则文档，不走项目流程 |
 | 修改 + 局部任务 | 加载创作规划.yaml → 根据修改需求更新规划文档 → 定位条目 → 加载创作规则文档（`references/revision.md`） |
 | 修改 + 完整项目 | 断点续接（`references/resume.md`） → 检测进度后回到完整项目流程对应步骤继续 |
@@ -49,41 +48,51 @@ description: "创建、编辑、评估 SillyTavern 角色卡和世界书（角�
 
 ## 完整项目流程
 
-1. **需求对齐：项目属性**：收集项目属性（名称、形式、MVU/EJS 需求、typeLists 调整等）
-   - 先询问用户偏好模式（粗略规划 / 一次确认）→ `references/requirements.md`
-   - 从材料转化时先执行 `references/conversion.md`
-2. **项目创建**：执行 `node scripts/tavern-cards-forge.mjs init {project}` 创建目录结构、状态文件与模板 → `references/project-setup.md`
-3. **需求对齐：世界/角色/条目**：收集世界信息、角色信息、条目规划、写作风格，产出编写规划文档 `创作规划.yaml`（项目目录下）→ `references/requirements.md`
-4. **创建条目**：按创作规划依次编写，每条创作前做前置 CoT 自检，写完立即注册；按 typeLists 位置分组，每个位置的条目全部完成后调用 `check-agent` 做禁词扫描，全部条目完成后做 DoubleCheck → `references/composition.md`
+> **前置要求**：`cards/{Project}/design-spec.md` 已由 tavern-design 产出。如果还没有，先调用 tavern-design skill 完成大方向讨论与剧情设计，再回到本流程。
+
+1. **项目创建**：从 `design-spec.md` 读取项目名称、形式、主题、体验目标与风格意向等属性；技术收尾确认 MVU/EJS、typeLists、头像、UI 模式；执行 `node scripts/tavern-cards-forge.mjs init {project}` 创建目录结构、状态文件与模板 → `references/project-setup.md`
+2. **创作规划**：以 `design-spec.md`（及 `故事大纲.yaml`，如有）为输入，展开具体世界信息、角色信息、条目规划、写作风格，产出编写规划文档 `创作规划.yaml`（项目目录下）→ `references/requirements.md`
+3. **创建条目**：按创作规划依次编写，每条创作前做前置 CoT 自检，写完立即注册；按 typeLists 位置分组，每个位置的条目全部完成后调用 `check-agent` 做禁词扫描，全部条目完成后做 DoubleCheck → `references/composition.md`
    - 前置必读：`references/rules.md`（正面规则）和 `references/conventions.md`（注册约定）
-5. **编写 MVU 变量**（如需）→ `references/mvu/guide.md`，完成后按收尾步骤复制模板、应用 patch、校验
-6. **EJS 条件与段落控制编写 + EJS 收尾检查**（如需 EJS）→ `references/ejs/guide.md`
+4. **编写 MVU 变量**（如需）：调 `schema-agent` 编写 `schema.ts`，主代理按顺序编写 initvar.yaml 与 变量更新规则.yaml → `references/mvu/guide.md`，完成后按收尾步骤复制模板、应用 patch、校验
+5. **EJS 条件与段落控制编写 + EJS 收尾检查**（如需 EJS）→ `references/ejs/guide.md`
   - 用 getvar() 读取变量、@@private + const 在条目内定义局部短名
   - 遇到 EJS 运行时报错（如 `xxx is not defined`、`Identifier ... has already been declared`）先读 `references/error-handling.md#SillyTavern-运行时`
-7. **MVU 一致性检查**（如需 MVU）→ 执行 `references/mvu/guide.md` 收尾步骤第 4 步
-8. **运行 configure**：`node scripts/tavern-cards-forge.mjs configure {project}`，自动推导运行时字段 → `references/configuration.md`（仅特殊需求时读取）
-9. **编写开场白**（角色卡）→ `references/contents-creation/first-message.md`
-   - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理 / 表单式写入占位符，前端界面留到步骤 10）
+6. **MVU 一致性检查**（如需 MVU）→ 执行 `references/mvu/guide.md` 收尾步骤第 4 步
+7. **运行 configure**：`node scripts/tavern-cards-forge.mjs configure {project}`，自动推导运行时字段 → `references/configuration.md`（仅特殊需求时读取）
+8. **编写开场白**（角色卡）→ `references/contents-creation/first-message.md`
+   - 读取创作规划的 `first_messages` 数组，逐项处理（叙事式调 `first-message-agent` / 大纲式直接整理 / 表单式写入占位符，前端界面留到步骤 9）
    - 各项完成后按顺序注册到 state 的 `first_messages`
    - 对于有 `initvar_override` 的项，参考 `references/mvu/initvar.md#initvar_override`
-10. **UI 界面开发**（如使用 MVU）
+9. **UI 界面开发**（如使用 MVU）
     - 读取 `创作规划.yaml` 的 `ui_mode`：
       - `text` → 编辑 `正则/状态栏界面.html`（详见 `references/ui/text.md`）
       - `frontend` → 调用 tavern-ui skill
-      - `none` → 跳过，直接进入步骤 11
+      - `none` → 跳过，直接进入步骤 10
       - `pending` / 缺失 → 不可进入此步，先收敛为 text / frontend / none
-11. **打包输出**：执行打包前检查清单后，运行 `node scripts/tavern-cards-forge.mjs pack {project}` → `references/packaging.md`
+10. **打包输出**：执行打包前检查清单后，运行 `node scripts/tavern-cards-forge.mjs pack {project}` → `references/packaging.md`
 
 ## 状态文件
 
 每个项目在根目录维护 `tavern-cards-state.json`，记录项目属性和条目清单。完整字段定义见 `references/type/state.ts`。
+
+## 子代理
+
+调用时由 Agent harness 注入任务，主代理在 task 字符串里携带下表「输入」一列的参数，并按下表「输出」一列处理返回。
+
+| 子代理 | 作用 | 输入 | 输出 |
+|--------|------|------|------|
+| check-agent | 禁词扫描 | 需检查的全部条目的文件路径；附内容类型与所属角色/世界观提示 | 「通过 / 不通过」；不通过时按条目给出违规类型、原文、建议 |
+| schema-agent | 编写或修改 `schema.ts` | 项目目录路径、创作规划路径、schema.ts 路径（后两者未提供时默认在项目目录下）；变更场景另传变更类型与变量路径 | 写入 `schema.ts`；变更场景另返回「需主代理同步」清单 |
+| first-message-agent | 叙事式开场白 | 创作规划路径、当前项索引；启用 MVU 时附 initvar 路径（override 或默认） | 写入当前项 `output_path`，并返回正文与自查摘要 |
+
+各调用点的具体衔接见 `references/composition.md`、`references/mvu/guide.md`、`references/contents-creation/first-message.md`。
 
 ## 工具参考
 
 脚本工具均位于本 skill 的 `scripts/` 目录下。
 
 - **tavern-cards-forge**：离线打包/解包/配置工具，完整命令用法与数据模型见 `references/manual.md`。
-- **validate-conversion-outline**：转化大纲验证脚本，验证 YAML 结构、章节引用、占位符和原文引用真实性。使用说明见 `references/conversion/validation.md`。
 
 ## 参考资料
 
@@ -95,17 +104,9 @@ references/
 ├── composition.md               —— 条目编排、创作循环、DoubleCheck
 ├── rules.md                     —— 正面写作规则（前置必读）
 ├── rules-check.md               —— 写作质量检查清单（前置自检 + 子代理扫描两用）
-├── error-handling.md            —— 错误处理流程（转化、技术阶段、运行时）
+├── error-handling.md            —— 错误处理流程（技术阶段、运行时）
 ├── revision.md                  —— 修改与质量修正流程（信息不足/用户反馈/需求变更/一致性冲突）
 ├── conventions.md               —— 注册约定与文件格式（前置必读）
-├── conversion.md                —— 从材料转化流程（主文档）
-├── conversion/
-│   ├── outline-spec.md          —— 大纲规范（信息分类含factions、记录原则、行号规范）
-│   ├── outline.md               —— 大纲构建指导（长文本处理、分级模板、整理深化含分卷检测）
-│   ├── validation.md            —— 转化大纲验证脚本使用说明（validate-conversion-outline.mjs）
-│   ├── assessment.md            —— 材料类型评估标准
-│   ├── source-chapters.md       —— source_chapters 标注标准
-│   └── key-info.md              —— 关键信息确认流程
 ├── project-setup.md             —— 项目创建
 ├── modify-existing.md           —— 已有角色卡/世界书修改流程（外部 PNG/JSON 导入）
 ├── resume.md                    —— 断点续接
