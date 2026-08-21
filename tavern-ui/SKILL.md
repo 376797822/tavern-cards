@@ -59,7 +59,7 @@ pnpm install
 
 ### 2. 设计构思
 
-这一步把故事翻译成视觉与组件决策，产出 `design-spec.md`，供后续编码（开发状态栏界面、CSS 色彩变量）消费。完整指引见 `references/design-thinking.md`。
+这一步把故事翻译成视觉与组件决策，向已有 `design-spec.md` 追加 UI 设计段，供后续编码（开发状态栏界面、CSS 色彩变量）消费。完整指引见 `references/design-thinking.md`。
 
 **命中下列任一条件时必须走**：
 
@@ -78,7 +78,7 @@ pnpm install
 
 ### 4. 开发前端界面
 
-消费 设计构思 产出的 `design-spec.md`：**视觉基调**（感官词/交互人格/语义配色）落到 CSS 与交互反馈，**组件树草图**落到 Vue 子组件拆分与 `components/` 目录规划，**信息优先级**决定哪些区块进标题栏、哪些进展开区。
+消费 `design-spec.md`（tavern-design 的叙事段 + 本阶段追加的 UI 设计段）：**视觉基调**（感官词/交互人格/语义配色）落到 CSS 与交互反馈，**组件树草图**落到 Vue 子组件拆分与 `components/` 目录规划，**信息优先级**决定哪些区块进标题栏、哪些进展开区。
 
 #### 准备素材
 

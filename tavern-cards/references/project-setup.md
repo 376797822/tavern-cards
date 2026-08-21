@@ -1,14 +1,9 @@
 # 项目属性与项目创建
 
-需求对齐开始后，先收集项目属性，再创建项目结构。
+## 从 design-spec.md 读取属性与技术收尾
 
-## 项目属性收集
+读 `design-spec.md` 中已记录的项目名称、形式、主题、体验目标、风格意向。以下技术细节需在本阶段与用户确认：
 
-确认以下信息：
-
-- **项目名称**：角色卡/世界书的正式名称
-- **世界书名称**：通常与项目名称一致
-- **形式**：角色卡（世界书内嵌在角色卡中）或独立世界书
 - **动态变化需求**：
   - 不需要 → 不使用 MVU 和 EJS
   - 需要追踪变量（区域切换、好感度、剧情进度等）→ 使用 MVU
@@ -26,7 +21,7 @@
   - `text` → 纯文本版状态栏
   - `frontend` → 前端版状态栏
   - `none` → 不需要状态栏
-  - 未定 → 暂时缺省，必须在 UI 界面开发（步骤 10）前收敛
+  - 未定 → 暂时缺省，必须在 UI 界面开发（步骤 9）前收敛
 
 ### typeLists 调整
 
@@ -50,7 +45,7 @@ typeLists 的三个位置通常各有侧重：`before_char` 放宏观条目，`a
 }
 ```
 
-3. 运行 `node scripts/tavern-cards-forge.mjs init {project}`：自动创建项目目录和 `tavern-cards-state.json`，从 `.cardrc.json` 读取默认值写入 state（typeLists、strategyThresholds、partOrder、depth_defaults）。projectName 仅空时设置，create_date 仅空时设为当前时间。根据项目属性收集结果附加选项：
+3. 运行 `node scripts/tavern-cards-forge.mjs init {project}`：自动创建项目目录和 `tavern-cards-state.json`，从 `.cardrc.json` 读取默认值写入 state（typeLists、strategyThresholds、partOrder、depth_defaults）。projectName 仅空时设置，create_date 仅空时设为当前时间。根据技术收尾确认结果附加选项：
    - 独立世界书 → 加 `--worldbook`（自动设置 `form: "worldbook"`, `mvu: false`）
    - 角色卡 + 需要 MVU → 加 `--mvu`（自动设置 `form: "charactercard"`, `mvu: true`）
    - 角色卡 + 不需要 MVU → 无选项即可（默认 `form: "charactercard"`, `mvu: false`）
@@ -72,15 +67,16 @@ typeLists 的三个位置通常各有侧重：`before_char` 放宏观条目，`a
 
 **约束**：初始化时不预填充条目骨架。`node scripts/tavern-cards-forge.mjs patch` 会进行 schema 校验，字段缺失的条目无法通过。条目在创作阶段逐条完成后，通过 `node scripts/tavern-cards-forge.mjs patch` 注册（见 `references/conventions.md`）。
 
-6. 移动素材和转化成果到项目目录：
-   - 如有转化阶段的 `故事大纲.yaml`，移至 `cards/{Project}/故事大纲.yaml`
-   - 如有源材料文件，移至 `cards/{Project}/source/` 目录
+5. 确认项目目录中的已有设计/转化文件：
+   - `design-spec.md` 已由 tavern-design 创建，无需移动
+   - 如有转化阶段的 `故事大纲.yaml` 和源材料文件，也已由 tavern-design 放在项目目录中，无需移动
    - 项目目录结构示例：
    ```
    cards/{Project}/
+     design-spec.md         ← tavern-design 产出
      tavern-cards-state.json
-     创作规划.yaml          ← 需求对齐阶段产出
-     故事大纲.yaml          ← 转化阶段产出（如有）
+     创作规划.yaml          ← 本阶段产出
+     故事大纲.yaml          ← tavern-design 转化阶段产出（如有）
      source/                ← 源材料（如有）
        世界设定.yaml
        角色设定.yaml
@@ -138,7 +134,7 @@ typeLists 的三个位置通常各有侧重：`before_char` 放宏观条目，`a
 
 `阶段指导` 通常是总指导条目，必须常驻后由 EJS 段落控制当前阶段内容，因此 strategyThresholds 设为 `"Infinity"`。
 
-如果项目属性收集时确认了调整，使用调整后的值。
+如果技术收尾时确认了调整，使用调整后的值。
 
 状态文件的完整字段定义见 `references/type/state.ts`，配置文件见 `references/type/settings.ts`。
 

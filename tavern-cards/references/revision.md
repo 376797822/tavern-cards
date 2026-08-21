@@ -6,12 +6,10 @@
 
 ## 信息不足
 
-**命名问题**（具体名称缺失）：
-→ 归「关键信息确认」流程（见 `references/conversion/key-info.md`）
+信息缺失时按程度分级处理：
 
-**内容完整性问题**（信息不够详细）：
 1. 评估缺失程度：核心信息 vs 补充信息
-2. **核心信息**：立即询问用户补充，不可跳过或标记未知
+2. **核心信息**（缺失即无法编写条目，如角色名、地名等具体名称）：立即询问用户补充，不可跳过或标记未知
 3. **补充信息**：记录到 `创作规划.yaml` 的 `# 待补充` 注释中，在该条目编写前统一询问用户
 4. **统一询问时机**：每个条目编写前，先检查是否有待补充信息，一次性询问用户后再编写
 
@@ -46,7 +44,7 @@
 4. 如涉及 MVU 结构变更，按 `references/mvu/guide.md#修改流程` 执行变更传播和校验。
    - 更新 EJS 条目内的 getvar 路径（如有 EJS 引用该变量）
    - 运行同步检查命令校验 initvar 与 schema.ts 一致
-   - 编辑 `schema.ts` 加字段时保持同一 `z.object` 内键名唯一；如报重复字段键错误，处置见 `references/error-handling.md#mvu-校验失败`
+   - 调 `schema-agent` 修改 schema.ts（schema-agent 会自查同一 `z.object` 内键名唯一）；如 `validate-mvu` / `pack` 报重复字段键错误，处置见 `references/error-handling.md#mvu-校验失败`
 
 ## 条目间一致性冲突
 
