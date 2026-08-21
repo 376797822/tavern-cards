@@ -2,7 +2,33 @@
 
 本项目基于 [ai4rpg/tavern-cards](https://github.com/ai4rpg/tavern-cards) 的 fork。版本号从 v1.0 开始记录本 fork 的自定义改动，跟随上游更新时在对应版本内注明。
 
-## v1.3 — 上游同步：UI 模板 / 表单式开局 / 打包增强（当前版本）
+## v1.4 — 上游同步：拆分 tavern-design / agents 迁移到根目录（当前版本）
+
+> 合并上游 `ccc55f6..b73dd8f`，共 2 个结构化重构提交。本 fork 的五种角色整合模版未受影响，融合到上游新版结构，自动合并零冲突。
+
+### 上游变更
+
+- **拆分 tavern-design skill** [`2ab1653`]：将原 tavern-cards 中的「叙事设计阶段」（大方向讨论、剧情设计、材料转化、产出 `design-spec.md`）独立为新的 `tavern-design/` skill；新增 `references/design-guide.md`（七大设计维度）、迁移 `conversion/` 材料转化文档与 `conversion-agent`；确立跨 skill 交接物 `design-spec.md`（tavern-design 写入 → tavern-ui 追加 UI 段 → tavern-cards 消费）
+- **子代理集中到仓库根目录** [`b73dd8f`]：把各 skill 目录下的共享子代理迁移到仓库根 `agents/`（check-agent、first-message-agent、conversion-agent），并新增 **schema-agent**（负责 schema.ts 编写/校验）；README 安装指南扩展子代理 invocation 契约，`mvu/schema.md` 简化、`rules-check.md` 补充
+- **tavern-cards 精简**：`SKILL.md`、`error-handling.md`、`composition.md`、`project-setup.md` 等去掉已迁出的设计逻辑，聚焦项目创建与创作规划
+
+### 涉及文件
+
+`tavern-cards/`：`SKILL.md`、`composition.md`、`error-handling.md`、`mvu/guide.md`、`mvu/schema.md`、`project-setup.md`、`requirements.md`、`requirements/entries-dynamics-style.md`、`requirements/world-characters.md`、`resume.md`、`revision.md`、`rules-check.md`
+
+`tavern-design/`（新增 skill）：`SKILL.md`、`references/design-guide.md`、`references/conversion*.md`、`scripts/validate-conversion-outline.mjs`
+
+`agents/`（迁移+新增）：`check-agent.md`、`first-message-agent.md`、`conversion-agent.md`、`schema-agent.md`（新增）
+
+`tavern-ui/`：`SKILL.md`、`references/design-thinking.md`、`README.md`
+
+### 融合说明
+
+本 fork 的五种角色整合模版（主角/NPC/功能/家庭/组织）及其在 `composition.md`、`SKILL.md` 中的接入（含"写角色的必问判断"、模版映射表、参考资料索引）完整保留并适配到上游新版结构，合并零冲突。
+
+---
+
+## v1.3 — 上游同步：UI 模板 / 表单式开局 / 打包增强
 
 > 合并上游 `a053e54..ccc55f6`，共 5 个提交，涉及 `tavern-cards` 与 `tavern-ui` 两个 skill。本 fork 的自定义模版未受影响，自动合并零冲突。
 
