@@ -2,25 +2,26 @@
 
 本项目基于 [ai4rpg/tavern-cards](https://github.com/ai4rpg/tavern-cards) 的 fork。版本号从 v1.0 开始记录本 fork 的自定义改动，跟随上游更新时在对应版本内注明。
 
-## v1.4 — 上游同步：拆分 tavern-design / agents 迁移到根目录（当前版本）
+## v1.4 — 上游同步：tavern-design 拆分 / 共享 subagent 中央化（当前版本）
 
-> 合并上游 `ccc55f6..b73dd8f`，共 2 个结构化重构提交。本 fork 的五种角色整合模版未受影响，融合到上游新版结构，自动合并零冲突。
+> 合并上游 `ccc55f6..b73dd8f`，共 2 个提交。本 fork 的自定义模版未受影响，自动合并零冲突。
 
-### 上游变更
+### 上游变更（结构重构）
 
-- **拆分 tavern-design skill** [`2ab1653`]：将原 tavern-cards 中的「叙事设计阶段」（大方向讨论、剧情设计、材料转化、产出 `design-spec.md`）独立为新的 `tavern-design/` skill；新增 `references/design-guide.md`（七大设计维度）、迁移 `conversion/` 材料转化文档与 `conversion-agent`；确立跨 skill 交接物 `design-spec.md`（tavern-design 写入 → tavern-ui 追加 UI 段 → tavern-cards 消费）
-- **子代理集中到仓库根目录** [`b73dd8f`]：把各 skill 目录下的共享子代理迁移到仓库根 `agents/`（check-agent、first-message-agent、conversion-agent），并新增 **schema-agent**（负责 schema.ts 编写/校验）；README 安装指南扩展子代理 invocation 契约，`mvu/schema.md` 简化、`rules-check.md` 补充
-- **tavern-cards 精简**：`SKILL.md`、`error-handling.md`、`composition.md`、`project-setup.md` 等去掉已迁出的设计逻辑，聚焦项目创建与创作规划
+- **叙事设计拆分为 tavern-design skill** [`2ab1653`]：新增 `tavern-design/` skill（`SKILL.md` + `references/design-guide.md`），转化标注、大纲提取等 conversion 文档从 tavern-cards 移入；tavern-cards 主流程改为以 `design-spec.md` 为前置输入（项目创建 → 创作规划 → 条目创作），`project-setup.md`、`requirements.md`、`resume.md`、`revision.md`、`error-handling.md` 同步调整
+- **共享 subagent 中央化到仓库根目录** [`b73dd8f`]：`tavern-cards/agents/*` 移到根目录 `agents/`，新增 `schema-agent.md`（MVU 变量结构编写）；`mvu/schema.md` 改为「读创作规划 → 确认大纲 → 调 schema-agent」的调用流程；README 安装指南重写（符号链接建议、Codex TOML 特例、Pi subagent 扩展、子代理模型/推理力度配置）
+
+### 上游变更（tavern-ui）
+
+- **设计构思文档交接对齐** [`2ab1653`]：`design-thinking.md` 精简，与 tavern-design 产出的 `design-spec.md` 交接口径一致
 
 ### 涉及文件
 
-`tavern-cards/`：`SKILL.md`、`composition.md`、`error-handling.md`、`mvu/guide.md`、`mvu/schema.md`、`project-setup.md`、`requirements.md`、`requirements/entries-dynamics-style.md`、`requirements/world-characters.md`、`resume.md`、`revision.md`、`rules-check.md`
-
-`tavern-design/`（新增 skill）：`SKILL.md`、`references/design-guide.md`、`references/conversion*.md`、`scripts/validate-conversion-outline.mjs`
-
-`agents/`（迁移+新增）：`check-agent.md`、`first-message-agent.md`、`conversion-agent.md`、`schema-agent.md`（新增）
-
-`tavern-ui/`：`SKILL.md`、`references/design-thinking.md`、`README.md`
+- 新增：`tavern-design/`（skill 目录）、`agents/schema-agent.md`
+- 移动：`tavern-cards/agents/*` → `agents/`；`tavern-cards/references/conversion*`、`scripts/validate-conversion-outline.mjs` → `tavern-design/`
+- `tavern-cards/`：`SKILL.md`、`composition.md`、`project-setup.md`、`requirements.md`、`resume.md`、`revision.md`、`error-handling.md`、`mvu/schema.md`、`mvu/guide.md`、`rules-check.md`、`entries-dynamics-style.md`、`world-characters.md`
+- `tavern-ui/`：`SKILL.md`、`design-thinking.md`
+- `README.md`
 
 ### 融合说明
 
